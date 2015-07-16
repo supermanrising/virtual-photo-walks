@@ -25,6 +25,18 @@
       </ul>
     </div>
     <div id="map-canvas"></div>
+    <div id="info-window-template" style="display: none;" data-bind="with: currentMapMarker">
+      <div id="info-window-inner">
+        <h1 data-bind="text: title"></h1>
+        <p data-bind="text: address"></p>
+        <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
+        <ul data-bind="foreach: photos">
+          <li><a href="" target="_blank" data-bind="attr: { href: link }"><img src="" alt="" data-bind="attr: { src: images.thumbnail.url }" ></a></li>
+        </ul>
+      </div>
+
+    </div>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/knockout.js"></script>
     <script src="js/main.js"></script>
   </body>

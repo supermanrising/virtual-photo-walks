@@ -4,6 +4,17 @@ html, body, #map-canvas {
 	padding: 0;
 }
 
+h1 {
+	font-weight: 500;
+	margin-bottom: 5px;
+}
+
+h4 {
+	font-weight: 300;
+	margin-bottom: 5px;
+
+}
+
 body {
 	font-family: 'Lato', sans-serif;
 }
@@ -73,4 +84,28 @@ ul {
 	border-bottom: 1px #cccccc solid;
 	font-weight: 300;
 	font-size: 15px;
+}
+
+#info-window-inner {
+	max-width: 290px;
+}
+
+#info-window-inner p {
+	margin:0;
+	font-style: italic;
+	font-size: 12px;
+}
+
+#info-window-inner li {
+
+}
+
+#info-window-inner li {
+	display: inline;
+}
+
+#info-window-inner img {
+	width: 70px;
+	height: 70px;
+	border-style: none;
 }
