@@ -1,147 +1,86 @@
 var map;
-
-function findMapMarkers() {
-	var numberOfLocations = vm.mapLocations().length;
-	for (i = 0; i< numberOfLocations; i++) {
-		vm.mapLocations()[i].locationInfo = 
-	    '<h1>' + vm.mapLocations()[i].title + '</h1>' +
-	    '<ul data-bind="foreach: instagramPhotos">' +
-	    '<li data-bind="text: $data"></li>' +
-	    '</ul>';
-		requestMapMarker(vm.mapLocations()[i]);
-	}
-}
-
-function requestMapMarker(initialLocation) {
-	var request;
-	var service = new google.maps.places.PlacesService(map);
-	// the search request object
-	request = {
-		query: initialLocation.title() + ' in Vancouver, BC'
-	};
-
-	service.textSearch(request, function callback(results, status) {
-		if (status == google.maps.places.PlacesServiceStatus.OK) {
-	    	createMapMarker(results[0], initialLocation);
-	    } else {
-	    	console.log('failed: ' + status);
-	    }
-	});
-}
-
-function createMapMarker(placeData, loc) {
-	var marker = new google.maps.Marker({
-	    map: map,
-	    animation: google.maps.Animation.DROP,
-	    position: placeData.geometry.location,
-	});
-	loc.marker = marker;
-	loc.address(placeData.formatted_address);
-	    
-	google.maps.event.addListener(loc.marker, 'click', function() {
-		vm.openInfoWindow(loc);
-	});
-}
+var vancouver = new google.maps.LatLng(49.2667,-123.1667);
 
 function initialize() {
 	var mapOptions = {
-	    center: { lat: 49.2667, lng: -123.1667},
-	   	zoom: 12
+	    center: vancouver,
+	   	zoom: 11
 	};
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-	findMapMarkers();
+	requestMapMarkers();
+}
+
+function requestMapMarkers() {
+	var request = {
+	    location: vancouver,
+	    radius: '20000',
+	    types: ['amusement_park','campground','hindu_temple','library','museum','park','university','zoo']
+	};
+	var service = new google.maps.places.PlacesService(map);
+
+	service.nearbySearch(request, callback);
+
+	function callback(results, status) {
+		if (status == google.maps.places.PlacesServiceStatus.OK) {
+			results.forEach(function(mapItem) {
+				vm.mapLocations.push( new googleMapLocation(mapItem) );
+			});
+			createMapMarkers();
+		} else {
+			console.log(status);
+		}
+	}
+}
+
+// Location Template
+var googleMapLocation = function(data) {
+	this.title = ko.observable(data.name),
+	this.position = data.geometry.location,
+	this.address = ko.observable(data.vicinity),
+	this.photos = ko.observableArray(),
+	this.marker = ko.observable();
+	this._destroy = ko.observable(false)
+}
+
+function createMapMarkers() {
+	var i;
+	var numberOfLocations = vm.mapLocations().length;
+	var currentMarker;
+	for (i = 0; i < numberOfLocations; i++) {
+		currentMarker = vm.mapLocations()[i];
+		var marker = new google.maps.Marker({
+		    map: map,
+		    animation: google.maps.Animation.DROP,
+		    position: currentMarker.position
+		});
+		currentMarker.marker(marker);
+		createEventListener(currentMarker);
+	}
+}
+
+function createEventListener(currentMarker) {
+	google.maps.event.addListener(currentMarker.marker(), 'click', function() {
+		vm.openInfoWindow(currentMarker);
+	});
 }
 
 function viewModel() {
 	var self = this;
 
-	self.mapLocations = ko.observableArray([
-		{
-			title: ko.observable('Lighthouse Park'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Granville Island'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Granville Street Bridge'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Gastown Steam Clock'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Burrard Street Bridge'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Portside Park'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Canada Place'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Stanley Park'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Lions Gate Bridge'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Olympic Village'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('Kitsilano'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-		{
-			title: ko.observable('UBC'),
-			address: ko.observable(),
-			photos: ko.observableArray(),
-			_destroy: ko.observable(false)
-		},
-	]);
+	self.mapLocations = ko.observableArray([]);
 
 	self.searchTerm = ko.observable('');
 
 	self.updateLocations = function() {
 		self.mapLocations().forEach(function(entry) {
-			//console.log(entry.title.indexOf(self.searchTerm()));
+			console.log(entry.title().indexOf(self.searchTerm()));
 			if (entry.title().toLowerCase().indexOf(self.searchTerm().toLowerCase()) >= 0 ||
 				self.searchTerm() == '') {
 				entry._destroy(false);
-				entry.marker.setVisible(true);
+				entry.marker().setVisible(true);
 			} else {
 				entry._destroy(true);
-				entry.marker.setVisible(false);
+				entry.marker().setVisible(false);
 			}
 			
 		});
@@ -154,11 +93,7 @@ function viewModel() {
 		numberOfInstagramPhotos;
 
 	var instaID = '65450f0c27544afaa1a64a11b40d0611';
-	self.currentMapMarker = ko.observable({
-		title: ko.observable(),
-		photos: ko.observableArray(),
-		address: ko.observable()
-	});
+	self.currentMapMarker = ko.observable();
 	self.infoWindow = ko.observable('');
 
 	self.openInfoWindow = function(mapMarker) {
@@ -175,14 +110,14 @@ function viewModel() {
 				content: $('#info-window-template').html(),
 				maxWidth: 800
 			}));
-		self.infoWindow().open(map, self.currentMapMarker().marker);
-		self.currentMapMarker().marker.setAnimation(google.maps.Animation.BOUNCE);
+		self.infoWindow().open(map, self.currentMapMarker().marker());
+		self.currentMapMarker().marker().setAnimation(google.maps.Animation.BOUNCE);
 		setTimeout(function() {
-			self.currentMapMarker().marker.setAnimation(google.maps.Animation.null);
+			self.currentMapMarker().marker().setAnimation(google.maps.Animation.null);
 		}, 2100);
 
-	    lat = mapMarker.marker.position.A;
-	    lng = mapMarker.marker.position.F;
+	    lat = self.currentMapMarker().marker().position.A;
+	    lng = self.currentMapMarker().marker().position.F;
 	    formattedInstaURL = 'https://api.instagram.com/v1/media/search?lat=' + lat + '&lng=' + lng + '&distance=1000&client_id=' + instaID;
 	    //console.log(lat + ', ' + lng);
 	    
