@@ -24,16 +24,17 @@ require_once('lib/OAuth.php');
 // Set your OAuth credentials here  
 // These credentials can be obtained from the 'Manage API Access' page in the
 // developers documentation (http://www.yelp.com/developers)
-$CONSUMER_KEY = LxTY48_V9wVNDG1ksQ0ZFg;
-$CONSUMER_SECRET = ejmLvWiVfy4W3JhJ6Llf-__cwjQ;
-$TOKEN = uSj2SuYXmtFVtHvw1Rja4-WwIl6B5L6q;
-$TOKEN_SECRET = REhIL3SPwbUPywbn0P82-FHvrhs;
+$CONSUMER_KEY = 'LxTY48_V9wVNDG1ksQ0ZFg';
+$CONSUMER_SECRET = 'ejmLvWiVfy4W3JhJ6Llf-__cwjQ';
+$TOKEN = 'uSj2SuYXmtFVtHvw1Rja4-WwIl6B5L6q';
+$TOKEN_SECRET = 'REhIL3SPwbUPywbn0P82-FHvrhs';
 
 
 $API_HOST = 'api.yelp.com';
 $DEFAULT_TERM = 'dinner';
-$DEFAULT_LOCATION = 'San Francisco, CA';
-$SEARCH_LIMIT = 3;
+$DEFAULT_LOCATION = 'Vancouver, BC';
+$SEARCH_LIMIT = 15;
+$CATEGORY = 'parks';
 $SEARCH_PATH = '/v2/search/';
 $BUSINESS_PATH = '/v2/business/';
 
@@ -90,12 +91,14 @@ function request($host, $path) {
 function search($term, $location) {
     $url_params = array();
     
-    $url_params['term'] = $term ?: $GLOBALS['DEFAULT_TERM'];
+    //$url_params['term'] = $term ?: $GLOBALS['DEFAULT_TERM'];
     $url_params['location'] = $location?: $GLOBALS['DEFAULT_LOCATION'];
     $url_params['limit'] = $GLOBALS['SEARCH_LIMIT'];
+    $url_params['category_filter'] = $GLOBALS['CATEGORY'];
+    $url_params['sort'] = 2;
     $search_path = $GLOBALS['SEARCH_PATH'] . "?" . http_build_query($url_params);
     
-    return request($GLOBALS['API_HOST'], $search_path);
+    echo request($GLOBALS['API_HOST'], $search_path);
 }
 
 /**
@@ -117,8 +120,9 @@ function get_business($business_id) {
  * @param    $location    The location of the business to query
  */
 function query_api($term, $location) {     
-    $response = json_decode(search($term, $location));
-    $business_id = $response->businesses[0]->id;
+    search($term, $location);
+
+    /*$business_id = $response->businesses[0]->id;
     
     print sprintf(
         "%d businesses found, querying business info for the top result \"%s\"\n\n",         
@@ -129,7 +133,8 @@ function query_api($term, $location) {
     $response = get_business($business_id);
     
     print sprintf("Result for business \"%s\" found:\n", $business_id);
-    print "$response\n";
+    */
+
 }
 
 /**
@@ -142,8 +147,8 @@ $longopts  = array(
     
 $options = getopt("", $longopts);
 
-$term = $options['term'] ?: '';
-$location = $options['location'] ?: '';
+$term = 'dinner';
+$location = $_GET["location"];
 
 query_api($term, $location);
 

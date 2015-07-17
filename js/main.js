@@ -1,42 +1,40 @@
 var map;
+var geocoder;
 var vancouver = new google.maps.LatLng(49.2667,-123.1667);
 
 function initialize() {
 	var mapOptions = {
 	    center: vancouver,
-	   	zoom: 11
+	   	zoom: 12
 	};
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 	requestMapMarkers();
 }
 
 function requestMapMarkers() {
-	var request = {
-	    location: vancouver,
-	    radius: '20000',
-	    types: ['amusement_park','campground','hindu_temple','library','museum','park','university','zoo']
-	};
-	var service = new google.maps.places.PlacesService(map);
-
-	service.nearbySearch(request, callback);
-
-	function callback(results, status) {
-		if (status == google.maps.places.PlacesServiceStatus.OK) {
-			results.forEach(function(mapItem) {
-				vm.mapLocations.push( new googleMapLocation(mapItem) );
-			});
-			createMapMarkers();
-		} else {
-			console.log(status);
-		}
-	}
+	$.ajax({
+        type: "GET",
+        //dataType: "json",
+        url: 'php/request.php?location=' + 'Vancouver, BC',
+        success: function(data){
+        	dataObject = JSON.parse(data);
+        	console.log(dataObject);
+           	var numberOfLocations = dataObject.businesses.length;
+           	var i;
+           	for (i = 0; i < numberOfLocations; i++) {
+           		vm.mapLocations.push( new googleMapLocation(dataObject.businesses[i]));
+           	}
+           	createMapMarkers();
+        }
+    });
 }
 
 // Location Template
 var googleMapLocation = function(data) {
 	this.title = ko.observable(data.name),
-	this.position = data.geometry.location,
-	this.address = ko.observable(data.vicinity),
+	this.latitude = data.location.coordinate.latitude,
+	this.longitude = data.location.coordinate.longitude,
+	this.address = ko.observable(),
 	this.photos = ko.observableArray(),
 	this.marker = ko.observable();
 	this._destroy = ko.observable(false)
@@ -48,10 +46,12 @@ function createMapMarkers() {
 	var currentMarker;
 	for (i = 0; i < numberOfLocations; i++) {
 		currentMarker = vm.mapLocations()[i];
+		currentMarker.coordinates = new google.maps.LatLng(currentMarker.latitude,currentMarker.longitude);
+		currentMarker
 		var marker = new google.maps.Marker({
 		    map: map,
 		    animation: google.maps.Animation.DROP,
-		    position: currentMarker.position
+		    position: currentMarker.coordinates
 		});
 		currentMarker.marker(marker);
 		createEventListener(currentMarker);
@@ -116,9 +116,19 @@ function viewModel() {
 			self.currentMapMarker().marker().setAnimation(google.maps.Animation.null);
 		}, 2100);
 
+		// Get address based on yelp coordinates and set to currentMapMarker's address
+		geocoder = new google.maps.Geocoder();
+		geocoder.geocode( { 'location': self.currentMapMarker().coordinates}, function(results, status) {
+	      if (status == google.maps.GeocoderStatus.OK) {
+	        self.currentMapMarker().address(results[0].formatted_address);
+	      } else {
+	        alert("Geocode was not successful for the following reason: " + status);
+	      }
+	    });
+
 	    lat = self.currentMapMarker().marker().position.A;
 	    lng = self.currentMapMarker().marker().position.F;
-	    formattedInstaURL = 'https://api.instagram.com/v1/media/search?lat=' + lat + '&lng=' + lng + '&distance=1000&client_id=' + instaID;
+	    formattedInstaURL = 'https://api.instagram.com/v1/media/search?lat=' + lat + '&lng=' + lng + '&distance=500&client_id=' + instaID;
 	    //console.log(lat + ', ' + lng);
 	    
 
