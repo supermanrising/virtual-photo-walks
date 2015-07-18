@@ -28,9 +28,18 @@
     <div id="info-window-template" style="display: none;" data-bind="with: currentMapMarker">
       <div id="info-window-inner">
         <h1 data-bind="text: title"></h1>
-        <p data-bind="text: address"></p>
-        <br>
+        <p id="address" data-bind="text: address"></p>
+        <div id="stars">
+          <img src="" alt="stars-review" id="starsimg" data-bind="attr: {src: stars}">
+        </div>
+        <div id="review-count">
+          <p><span data-bind="text: reviewCount"></span> reviews</p>
+        </div>
         <img src="" alt="" id="yelp-image" data-bind="attr: {src: mainImage}">
+        <blockquote id="review"><span data-bind="text: review"></span></blockquote>
+        <div id="readmorelink">
+          <a href="" target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
+        </div>
         <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
         <ul data-bind="foreach: photos">
           <li><a href="" target="_blank" data-bind="attr: { href: link }"><img src="" alt="" data-bind="attr: { src: images.thumbnail.url }" ></a></li>

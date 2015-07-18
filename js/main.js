@@ -18,7 +18,7 @@ function requestMapMarkers() {
         url: 'php/request.php?location=' + 'Vancouver, BC',
         success: function(data){
         	dataObject = JSON.parse(data);
-        	console.log(dataObject);
+        	//console.log(dataObject);
            	var numberOfLocations = dataObject.businesses.length;
            	var i;
            	for (i = 0; i < numberOfLocations; i++) {
@@ -36,8 +36,12 @@ var googleMapLocation = function(data) {
 	this.longitude = data.location.coordinate.longitude,
 	this.address = ko.observable(),
 	this.photos = ko.observableArray(),
-	this.marker = ko.observable();
-	this.mainImage = ko.observable(data.image_url.replace("ms","l"));
+	this.marker = ko.observable(),
+	this.mainImage = ko.observable(data.image_url.replace("ms","l")),
+	this.review = ko.observable(data.snippet_text),
+	this.stars = ko.observable(data.rating_img_url),
+	this.reviewCount = ko.observable(data.review_count),
+	this.yelpLink = ko.observable(data.url),
 	this._destroy = ko.observable(false)
 }
 
@@ -48,7 +52,6 @@ function createMapMarkers() {
 	for (i = 0; i < numberOfLocations; i++) {
 		currentMarker = vm.mapLocations()[i];
 		currentMarker.coordinates = new google.maps.LatLng(currentMarker.latitude,currentMarker.longitude);
-		currentMarker
 		var marker = new google.maps.Marker({
 		    map: map,
 		    animation: google.maps.Animation.DROP,

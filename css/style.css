@@ -6,7 +6,7 @@ html, body, #map-canvas {
 
 h1 {
 	font-weight: 500;
-	margin-bottom: 5px;
+	margin-bottom: 3px;
 }
 
 h4 {
@@ -94,10 +94,74 @@ ul {
 	max-width: 100%;
 }
 
-#info-window-inner p {
+#address {
 	margin:0;
 	font-style: italic;
 	font-size: 12px;
+}
+
+#review {
+	font-size: 13px;
+	font-weight: 300;
+	font-style: italic;
+	margin: 15px 20px 0 20px;
+	position: relative;
+}
+
+#review:before, #review:after {
+	font-family: Georgia, serif;
+	content: "\201C";
+	position: absolute;
+	font-size: 50px;
+	line-height: 1;
+	color: #999;
+	opacity: .5;
+	font-style: normal;
+}
+
+#review:before {
+	top: -10px;
+	left: -18px;
+}
+
+#review:after {
+	content: "\201D";
+	right: -10px;
+	bottom: -0.5em;
+}
+
+#readmorelink {
+	width: 100%;
+	text-align: right;
+	margin-top: 0;
+}
+
+#readmorelink a {
+	text-decoration: none;
+	color: #999;
+	font-size: 11px;
+	margin-top: 0;
+}
+
+#readmorelink a:hover {
+	text-decoration: underline;
+}
+
+#stars {
+	margin: 5px 10px 0 0;
+	width: 90px;
+	float: left;
+}
+
+#starsimg {
+	max-width: 100%;
+}
+
+#review-count p {
+	margin-left: 91px;
+	margin-top: 5px;
+	font-weight: 500;
+	font-style: normal;
 }
 
 #info-window-inner li {
