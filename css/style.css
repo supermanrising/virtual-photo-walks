@@ -90,6 +90,10 @@ ul {
 	max-width: 290px;
 }
 
+#yelp-image {
+	max-width: 100%;
+}
+
 #info-window-inner p {
 	margin:0;
 	font-style: italic;
@@ -104,7 +108,7 @@ ul {
 	display: inline;
 }
 
-#info-window-inner img {
+#info-window-inner ul img {
 	width: 70px;
 	height: 70px;
 	border-style: none;

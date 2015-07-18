@@ -34,7 +34,7 @@ $API_HOST = 'api.yelp.com';
 $DEFAULT_TERM = 'dinner';
 $DEFAULT_LOCATION = 'Vancouver, BC';
 $SEARCH_LIMIT = 15;
-$CATEGORY = 'parks';
+$CATEGORY = 'parks,beaches';
 $SEARCH_PATH = '/v2/search/';
 $BUSINESS_PATH = '/v2/business/';
 

@@ -37,6 +37,7 @@ var googleMapLocation = function(data) {
 	this.address = ko.observable(),
 	this.photos = ko.observableArray(),
 	this.marker = ko.observable();
+	this.mainImage = ko.observable(data.image_url.replace("ms","l"));
 	this._destroy = ko.observable(false)
 }
 
@@ -115,6 +116,7 @@ function viewModel() {
 		setTimeout(function() {
 			self.currentMapMarker().marker().setAnimation(google.maps.Animation.null);
 		}, 2100);
+
 
 		// Get address based on yelp coordinates and set to currentMapMarker's address
 		geocoder = new google.maps.Geocoder();
