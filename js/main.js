@@ -11,6 +11,20 @@ function initialize() {
 	requestMapMarkers();
 }
 
+google.maps.Map.prototype.setCenterWithOffset= function(latlng, offsetX, offsetY) {
+    var map = this;
+    var ov = new google.maps.OverlayView();
+    ov.onAdd = function() {
+        var proj = this.getProjection();
+        var aPoint = proj.fromLatLngToContainerPixel(latlng);
+        aPoint.x = aPoint.x+offsetX;
+        aPoint.y = aPoint.y+offsetY;
+        map.panTo(proj.fromContainerPixelToLatLng(aPoint));
+    }; 
+    ov.draw = function() {}; 
+    ov.setMap(this); 
+};
+
 function requestMapMarkers() {
 	$.ajax({
         type: "GET",
@@ -77,7 +91,7 @@ function viewModel() {
 
 	self.updateLocations = function() {
 		self.mapLocations().forEach(function(entry) {
-			console.log(entry.title().indexOf(self.searchTerm()));
+			//console.log(entry.title().indexOf(self.searchTerm()));
 			if (entry.title().toLowerCase().indexOf(self.searchTerm().toLowerCase()) >= 0 ||
 				self.searchTerm() == '') {
 				entry._destroy(false);
@@ -112,7 +126,8 @@ function viewModel() {
 		self.infoWindow(
 			new google.maps.InfoWindow({
 				content: $('#info-window-template').html(),
-				maxWidth: 800
+				maxWidth: 800,
+				disableAutoPan: true
 			}));
 		self.infoWindow().open(map, self.currentMapMarker().marker());
 		self.currentMapMarker().marker().setAnimation(google.maps.Animation.BOUNCE);
@@ -145,6 +160,8 @@ function viewModel() {
 				self.displayInstaPhotos(data.data);
 			}
 		});
+
+	    
 	};
 
 	self.displayInstaPhotos = function(photos) {
@@ -160,6 +177,13 @@ function viewModel() {
 		}
 
 		self.infoWindow().setContent($('#info-window-template').html());
+
+		var infoWindowHeight = $('#info-window-template').height();
+		console.log(infoWindowHeight);
+
+		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight / 2 - 20) * -1);
+
+		//map.panTo(self.currentMapMarker().coordinates - (infoWindowHeight / 2));
 	};
 }
 
