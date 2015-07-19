@@ -5,11 +5,21 @@ var vancouver = new google.maps.LatLng(49.2667,-123.1667);
 function initialize() {
 	var mapOptions = {
 	    center: vancouver,
-	   	zoom: 12
+	   	zoom: 12,
+	   	zoomControlOptions: {
+	        position: google.maps.ControlPosition.LEFT_BOTTOM
+	    },
+	    panControlOptions: {
+	        position: google.maps.ControlPosition.LEFT_BOTTOM
+	    }
 	};
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 	requestMapMarkers();
 }
+
+/* This function offets the map based on the height of the infoWindow
+ *  http://stackoverflow.com/questions/3473367/how-to-offset-the-center-of-a-google-maps-api-v3-in-pixels
+ */
 
 google.maps.Map.prototype.setCenterWithOffset= function(latlng, offsetX, offsetY) {
     var map = this;
@@ -87,9 +97,38 @@ function viewModel() {
 
 	self.mapLocations = ko.observableArray([]);
 
+	self.toggleList = function() {
+		$('#list-view').animate({width: 'toggle'});
+		if ($('.relative').css('left') === '300px') {
+			$('.relative').animate({left: '0'});
+		} else {
+			$('.relative').animate({left: '300px'});
+		}
+	};
+
+	self.showList = function() {
+		if ($('#list-view').css('display') === 'none') {
+			$('#list-view').animate({width: 'toggle'});
+		}
+		$('.relative').animate({left: '300px'});
+	};
+
+	self.toggleBgHover = function(currentListItem) {
+		document.getElementById(currentListItem).style.backgroundColor = "#f3f3f3";
+	};
+
+	self.toggleBgLeave = function(currentListItem) {
+		document.getElementById(currentListItem).style.backgroundColor = "#fff";
+	};
+
 	self.searchTerm = ko.observable('');
 
 	self.updateLocations = function() {
+		// Close current infoWindow
+		if (self.infoWindow() != '') {
+			self.infoWindow().close();
+		}
+
 		self.mapLocations().forEach(function(entry) {
 			//console.log(entry.title().indexOf(self.searchTerm()));
 			if (entry.title().toLowerCase().indexOf(self.searchTerm().toLowerCase()) >= 0 ||
@@ -179,11 +218,7 @@ function viewModel() {
 		self.infoWindow().setContent($('#info-window-template').html());
 
 		var infoWindowHeight = $('#info-window-template').height();
-		console.log(infoWindowHeight);
-
 		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight / 2 - 20) * -1);
-
-		//map.panTo(self.currentMapMarker().coordinates - (infoWindowHeight / 2));
 	};
 }
 

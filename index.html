@@ -15,13 +15,16 @@
             <label id="search-label" for="search">Search</label>
           </div>
         <div id="search-input">
-          <input type="text" name="search" data-bind="textInput: searchTerm, event: { input: updateLocations }">
+          <input type="text" name="search" data-bind="textInput: searchTerm, event: { input: updateLocations, click: showList }">
         </div>
       </form>
     </div>
+    <div class="relative">
+      <img id="show-list" src="img/toggle-list.png" alt="Show list" data-bind="event: {click: toggleList}" >
+    </div>
     <div id="list-view">
       <ul data-bind="foreach: mapLocations">
-        <li data-bind="text: title, click: $root.openInfoWindow"></li>
+        <li data-bind="text: title, attr: {id: title}, event: {click: $root.openInfoWindow, mouseenter: function () { $root.toggleBgHover(title()); }, mouseleave: function () { $root.toggleBgLeave(title()); }}"></li>
       </ul>
     </div>
     <div id="map-canvas"></div>
@@ -35,7 +38,8 @@
         <div id="review-count">
           <p><span data-bind="text: reviewCount"></span> reviews</p>
         </div>
-        <img src="" alt="" id="yelp-image" data-bind="attr: {src: mainImage}">
+        <!-- Uncomment to include large Yelp image -->
+        <!--<img src="" alt="" id="yelp-image" data-bind="attr: {src: mainImage}">-->
         <blockquote id="review"><span data-bind="text: review"></span></blockquote>
         <div id="readmorelink">
           <a href="" target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
