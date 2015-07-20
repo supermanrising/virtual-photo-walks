@@ -1,10 +1,15 @@
 var map;
 var geocoder;
-var vancouver = new google.maps.LatLng(49.2667,-123.1667);
+var mapLocation;
 
-function initialize() {
+function initialize(lat,lng) {
+	$("#splash").fadeOut();
+	$("#app").css({
+  		display: "inline"
+	});
+	mapLocation = new google.maps.LatLng(lat,lng);
 	var mapOptions = {
-	    center: vancouver,
+	    center: mapLocation,
 	   	zoom: 12,
 	   	zoomControlOptions: {
 	        position: google.maps.ControlPosition.LEFT_BOTTOM
@@ -14,7 +19,7 @@ function initialize() {
 	    }
 	};
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
-	requestMapMarkers();
+	requestMapMarkers(lat,lng);
 }
 
 /* This function offets the map based on the height of the infoWindow
@@ -35,14 +40,14 @@ google.maps.Map.prototype.setCenterWithOffset= function(latlng, offsetX, offsetY
     ov.setMap(this); 
 };
 
-function requestMapMarkers() {
+function requestMapMarkers(lat,lng) {
 	$.ajax({
         type: "GET",
         //dataType: "json",
-        url: 'php/request.php?location=' + 'Vancouver, BC',
+        url: 'php/request.php?lat=' + lat + '&lng=' + lng,
         success: function(data){
         	dataObject = JSON.parse(data);
-        	//console.log(dataObject);
+        	console.log(dataObject);
            	var numberOfLocations = dataObject.businesses.length;
            	var i;
            	for (i = 0; i < numberOfLocations; i++) {
@@ -96,6 +101,24 @@ function viewModel() {
 	var self = this;
 
 	self.mapLocations = ko.observableArray([]);
+
+	self.locationSearch = ko.observable('');
+
+	self.checkLocation = function() {
+		console.log(self.locationSearch());
+		geocoder = new google.maps.Geocoder();
+		geocoder.geocode( { 'address': self.locationSearch()}, function(results, status) {
+	    	if (status == google.maps.GeocoderStatus.OK) {
+	       		var latitude = results[0].geometry.location.A;
+	       		var longtitude = results[0].geometry.location.F;
+	       		initialize(latitude, longtitude);
+	       		//console.log(results);
+	      	} else {
+	        	alert("Location could not be found");
+	      	}
+	    });
+		//initialize();
+	};
 
 	self.toggleList = function() {
 		$('#list-view').animate({width: 'toggle'});
@@ -225,4 +248,4 @@ function viewModel() {
 window.vm = new viewModel();
 ko.applyBindings(vm);
 
-google.maps.event.addDomListener(window, 'load', initialize);
+//google.maps.event.addDomListener(window, 'load', initialize);

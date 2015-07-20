@@ -9,47 +9,57 @@
     </script>
   </head>
   <body>
-    <div id="search">
-      <form data-bind="event: { submit: updateLocations }">
-          <div id="label-div">
-            <label id="search-label" for="search">Search</label>
-          </div>
-        <div id="search-input">
-          <input type="text" name="search" data-bind="textInput: searchTerm, event: { input: updateLocations, click: showList }">
-        </div>
+    <div id="splash">
+      <h1 id="splash-title">Where Would You Like To Walk Today?</h1>
+      <form data-bind="submit: checkLocation, ">
+        <input type="text" id="main-search" data-bind="textInput: locationSearch">
+        <br>
+        <input type="Submit" value="Let's Walk!">
       </form>
     </div>
-    <div class="relative">
-      <img id="show-list" src="img/toggle-list.png" alt="Show list" data-bind="event: {click: toggleList}" >
-    </div>
-    <div id="list-view">
-      <ul data-bind="foreach: mapLocations">
-        <li data-bind="text: title, attr: {id: title}, event: {click: $root.openInfoWindow, mouseenter: function () { $root.toggleBgHover(title()); }, mouseleave: function () { $root.toggleBgLeave(title()); }}"></li>
-      </ul>
-    </div>
-    <div id="map-canvas"></div>
-    <div id="info-window-template" style="display: none;" data-bind="with: currentMapMarker">
-      <div id="info-window-inner">
-        <h1 data-bind="text: title"></h1>
-        <p id="address" data-bind="text: address"></p>
-        <div id="stars">
-          <img src="" alt="stars-review" id="starsimg" data-bind="attr: {src: stars}">
-        </div>
-        <div id="review-count">
-          <p><span data-bind="text: reviewCount"></span> reviews</p>
-        </div>
-        <!-- Uncomment to include large Yelp image -->
-        <!--<img src="" alt="" id="yelp-image" data-bind="attr: {src: mainImage}">-->
-        <blockquote id="review"><span data-bind="text: review"></span></blockquote>
-        <div id="readmorelink">
-          <a href="" target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
-        </div>
-        <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
-        <ul data-bind="foreach: photos">
-          <li><a href="" target="_blank" data-bind="attr: { href: link }"><img src="" alt="" data-bind="attr: { src: images.thumbnail.url }" ></a></li>
+    <div id="app">
+      <div id="search">
+        <form data-bind="event: { submit: updateLocations }">
+            <div id="label-div">
+              <label id="search-label" for="search">Search</label>
+            </div>
+          <div id="search-input">
+            <input type="text" name="search" data-bind="textInput: searchTerm, event: { input: updateLocations, click: showList }">
+          </div>
+        </form>
+      </div>
+      <div class="relative">
+        <img id="show-list" src="img/toggle-list.png" alt="Show list" data-bind="event: {click: toggleList}" >
+      </div>
+      <div id="list-view">
+        <ul data-bind="foreach: mapLocations">
+          <li data-bind="text: title, attr: {id: title}, event: {click: $root.openInfoWindow, mouseenter: function () { $root.toggleBgHover(title()); }, mouseleave: function () { $root.toggleBgLeave(title()); }}"></li>
         </ul>
       </div>
+      <div id="map-canvas"></div>
+      <div id="info-window-template" style="display: none;" data-bind="with: currentMapMarker">
+        <div id="info-window-inner">
+          <h1 data-bind="text: title"></h1>
+          <p id="address" data-bind="text: address"></p>
+          <div id="stars">
+            <img src="" alt="stars-review" id="starsimg" data-bind="attr: {src: stars}">
+          </div>
+          <div id="review-count">
+            <p><span data-bind="text: reviewCount"></span> reviews</p>
+          </div>
+          <!-- Uncomment to include large Yelp image -->
+          <!--<img src="" alt="" id="yelp-image" data-bind="attr: {src: mainImage}">-->
+          <blockquote id="review"><span data-bind="text: review"></span></blockquote>
+          <div id="readmorelink">
+            <a href="" target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
+          </div>
+          <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
+          <ul data-bind="foreach: photos">
+            <li><a href="" target="_blank" data-bind="attr: { href: link }"><img src="" alt="" data-bind="attr: { src: images.thumbnail.url }" ></a></li>
+          </ul>
+        </div>
 
+      </div>
     </div>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/knockout.js"></script>

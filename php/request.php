@@ -92,7 +92,7 @@ function search($term, $location) {
     $url_params = array();
     
     //$url_params['term'] = $term ?: $GLOBALS['DEFAULT_TERM'];
-    $url_params['location'] = $location?: $GLOBALS['DEFAULT_LOCATION'];
+    $url_params['ll'] = $location?: $GLOBALS['DEFAULT_LOCATION'];
     $url_params['limit'] = $GLOBALS['SEARCH_LIMIT'];
     $url_params['category_filter'] = $GLOBALS['CATEGORY'];
     $url_params['sort'] = 2;
@@ -148,7 +148,9 @@ $longopts  = array(
 $options = getopt("", $longopts);
 
 $term = 'dinner';
-$location = $_GET["location"];
+$lat = $_GET["lat"];
+$lng = $_GET["lng"];
+$location = $lat . "," . $lng;
 
 query_api($term, $location);
 
