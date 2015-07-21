@@ -47,7 +47,6 @@ function requestMapMarkers(lat,lng) {
         url: 'php/request.php?lat=' + lat + '&lng=' + lng,
         success: function(data){
         	dataObject = JSON.parse(data);
-        	console.log(dataObject);
         	if (dataObject.hasOwnProperty('error')) {
         		//backup to google places search
         		var request = {
@@ -141,7 +140,6 @@ function createMapMarkers(callback) {
 				createEventListener(currentMapMarker);
 				bounds.extend(currentMapMarker.coordinates);
 			} else {
-				console.log(currentMapMarker.title() + 'didnt have coordinates');
 				var request = {
 				    location: mapLocation,
 				    radius: '20000',
@@ -152,8 +150,6 @@ function createMapMarkers(callback) {
 
 				function googleCallback(results, status) {
 					if (status == google.maps.places.PlacesServiceStatus.OK) {
-						console.log('found coordinates');
-						console.log(results);
 				    	currentMapMarker.coordinates = new google.maps.LatLng(results[0].geometry.location.A,results[0].geometry.location.F);
 				    	var marker = new google.maps.Marker({
 						    map: map,
@@ -161,7 +157,6 @@ function createMapMarkers(callback) {
 						    position: currentMapMarker.coordinates
 						});
 						currentMapMarker.marker(marker);
-						console.log(currentMapMarker);
 						createEventListener(currentMapMarker);
 						bounds.extend(currentMapMarker.coordinates);
 					}
@@ -178,7 +173,6 @@ function createMapMarkers(callback) {
 
 function fitMapToBounds() {
 	map.fitBounds(bounds);
-	console.log('done');
 }
 
 function createEventListener(currentMarker) {
@@ -195,6 +189,8 @@ function viewModel() {
 	self.locationSearch = ko.observable('');
 
 	self.checkLocation = function() {
+		self.mapLocations.removeAll();
+		bounds = new google.maps.LatLngBounds();
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode( { 'address': self.locationSearch()}, function(results, status) {
 	    	if (status == google.maps.GeocoderStatus.OK) {

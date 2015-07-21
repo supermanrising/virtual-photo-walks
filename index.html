@@ -21,7 +21,7 @@
       <div id="search">
         <form data-bind="event: { submit: updateLocations }">
             <div id="label-div">
-              <label id="search-label" for="search">Search</label>
+              <label id="search-label" for="search">Filter</label>
             </div>
           <div id="search-input">
             <input type="text" name="search" data-bind="textInput: searchTerm, event: { input: updateLocations, click: showList }">
@@ -35,6 +35,11 @@
         <ul data-bind="foreach: mapLocations">
           <li data-bind="text: title, attr: {id: title}, event: {click: $root.openInfoWindow, mouseenter: function () { $root.toggleBgHover(title()); }, mouseleave: function () { $root.toggleBgLeave(title()); }}"></li>
         </ul>
+      </div>
+      <div id="location-search">
+        <form data-bind="submit: checkLocation, ">
+          <input type="text" id="main-search" data-bind="textInput: locationSearch"><input type="Submit" value="Go!">
+        </form>
       </div>
       <div id="map-canvas"></div>
       <div id="info-window-template" style="display: none;" data-bind="with: currentMapMarker">
