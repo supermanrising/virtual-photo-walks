@@ -1,6 +1,7 @@
 var map;
 var geocoder;
 var mapLocation;
+var bounds = new google.maps.LatLngBounds();
 
 function initialize(lat,lng) {
 	$("#splash").fadeOut();
@@ -74,7 +75,7 @@ function requestMapMarkers(lat,lng) {
 	           	for (i = 0; i < numberOfLocations; i++) {
 	           		vm.mapLocations.push( new googleMapLocation(dataObject.businesses[i]));
 	           	}
-	           	createMapMarkers();
+	           	createMapMarkers(fitMapToBounds);
 	       	}
         }
     });
@@ -109,14 +110,14 @@ var googlePlacesLocation = function(data) {
 	this._destroy = ko.observable(false)
 }
 
-function createMapMarkers() {
+function createMapMarkers(callback) {
 	var i;
 	var numberOfLocations = vm.mapLocations().length;
 	var currentMarker;
 	for (i = 0; i < numberOfLocations; i++) {
 		currentMarker = vm.mapLocations()[i];
 		// Do inside function so it sets scope on currentMarker variable
-		setTheMarker(currentMarker);
+		setTheMarker(currentMarker,fitMapToBounds);
 		
 		function setTheMarker(currentMapMarker) {
 			if (currentMapMarker.hasOwnProperty('latitude')) {
@@ -128,6 +129,7 @@ function createMapMarkers() {
 				});
 				currentMapMarker.marker(marker);
 				createEventListener(currentMapMarker);
+				bounds.extend(currentMapMarker.coordinates);
 			} else if (currentMapMarker.location.hasOwnProperty("coordinate")) {
 				currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.location.coordinate.latitude,currentMapMarker.location.coordinate.longitude);
 				var marker = new google.maps.Marker({
@@ -137,6 +139,7 @@ function createMapMarkers() {
 				});
 				currentMapMarker.marker(marker);
 				createEventListener(currentMapMarker);
+				bounds.extend(currentMapMarker.coordinates);
 			} else {
 				console.log(currentMapMarker.title() + 'didnt have coordinates');
 				var request = {
@@ -145,9 +148,9 @@ function createMapMarkers() {
 				    query: currentMapMarker.title()
 				};
 				var service = new google.maps.places.PlacesService(map);
-				service.textSearch(request, callback);
+				service.textSearch(request, googleCallback);
 
-				function callback(results, status) {
+				function googleCallback(results, status) {
 					if (status == google.maps.places.PlacesServiceStatus.OK) {
 						console.log('found coordinates');
 						console.log(results);
@@ -160,11 +163,22 @@ function createMapMarkers() {
 						currentMapMarker.marker(marker);
 						console.log(currentMapMarker);
 						createEventListener(currentMapMarker);
+						bounds.extend(currentMapMarker.coordinates);
 					}
 				}
 			}
+			
 		}
+		/*$.when( setTheMarker() ).done(function() {
+       		map.fitBounds(bounds);
+		});*/
 	}
+	callback();
+}
+
+function fitMapToBounds() {
+	map.fitBounds(bounds);
+	console.log('done');
 }
 
 function createEventListener(currentMarker) {
