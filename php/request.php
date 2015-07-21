@@ -33,8 +33,8 @@ $TOKEN_SECRET = 'REhIL3SPwbUPywbn0P82-FHvrhs';
 $API_HOST = 'api.yelp.com';
 $DEFAULT_TERM = 'dinner';
 $DEFAULT_LOCATION = 'Vancouver, BC';
-$SEARCH_LIMIT = 15;
-$CATEGORY = 'parks,beaches';
+$SEARCH_LIMIT = 20;
+$CATEGORY = 'beaches,parks';
 $SEARCH_PATH = '/v2/search/';
 $BUSINESS_PATH = '/v2/business/';
 

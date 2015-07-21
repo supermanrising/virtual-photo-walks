@@ -43,17 +43,39 @@ google.maps.Map.prototype.setCenterWithOffset= function(latlng, offsetX, offsetY
 function requestMapMarkers(lat,lng) {
 	$.ajax({
         type: "GET",
-        //dataType: "json",
         url: 'php/request.php?lat=' + lat + '&lng=' + lng,
         success: function(data){
         	dataObject = JSON.parse(data);
         	console.log(dataObject);
-           	var numberOfLocations = dataObject.businesses.length;
-           	var i;
-           	for (i = 0; i < numberOfLocations; i++) {
-           		vm.mapLocations.push( new googleMapLocation(dataObject.businesses[i]));
-           	}
-           	createMapMarkers();
+        	if (dataObject.hasOwnProperty('error')) {
+        		//backup to google places search
+        		var request = {
+				    location: mapLocation,
+				    radius: '20000',
+				    types: ['amusement_park','church','zoo','stadium','park','museum','campground','hindu_temple']
+				};
+				var service = new google.maps.places.PlacesService(map);
+				service.nearbySearch(request, callback);
+
+				function callback(results, status) {
+					if (status == google.maps.places.PlacesServiceStatus.OK) {
+				    	console.log(results);
+				    	var numberOfLocations = results.length;
+	           			var i;
+				    	for (i = 0; i < numberOfLocations; i++) {
+			           		vm.mapLocations.push( new googlePlacesLocation(results[i]));
+			           	}
+			           	createMapMarkers();
+					}
+				}
+        	} else {
+	           	var numberOfLocations = dataObject.businesses.length;
+	           	var i;
+	           	for (i = 0; i < numberOfLocations; i++) {
+	           		vm.mapLocations.push( new googleMapLocation(dataObject.businesses[i]));
+	           	}
+	           	createMapMarkers();
+	       	}
         }
     });
 }
@@ -61,16 +83,29 @@ function requestMapMarkers(lat,lng) {
 // Location Template
 var googleMapLocation = function(data) {
 	this.title = ko.observable(data.name),
-	this.latitude = data.location.coordinate.latitude,
-	this.longitude = data.location.coordinate.longitude,
+	this.location = data.location,
 	this.address = ko.observable(),
 	this.photos = ko.observableArray(),
 	this.marker = ko.observable(),
-	this.mainImage = ko.observable(data.image_url.replace("ms","l")),
 	this.review = ko.observable(data.snippet_text),
 	this.stars = ko.observable(data.rating_img_url),
 	this.reviewCount = ko.observable(data.review_count),
 	this.yelpLink = ko.observable(data.url),
+	this._destroy = ko.observable(false)
+}
+
+// Location Template Backup for Google Places
+var googlePlacesLocation = function(data) {
+	this.title = ko.observable(data.name),
+	this.latitude = data.geometry.location.A,
+	this.longitude = data.geometry.location.F,
+	this.address = ko.observable(data.vicinity),
+	this.photos = ko.observableArray(),
+	this.marker = ko.observable(),
+	this.review = ko.observable(),
+	this.stars = ko.observable(),
+	this.reviewCount = ko.observable(),
+	this.yelpLink = ko.observable(),
 	this._destroy = ko.observable(false)
 }
 
@@ -80,14 +115,55 @@ function createMapMarkers() {
 	var currentMarker;
 	for (i = 0; i < numberOfLocations; i++) {
 		currentMarker = vm.mapLocations()[i];
-		currentMarker.coordinates = new google.maps.LatLng(currentMarker.latitude,currentMarker.longitude);
-		var marker = new google.maps.Marker({
-		    map: map,
-		    animation: google.maps.Animation.DROP,
-		    position: currentMarker.coordinates
-		});
-		currentMarker.marker(marker);
-		createEventListener(currentMarker);
+		// Do inside function so it sets scope on currentMarker variable
+		setTheMarker(currentMarker);
+		
+		function setTheMarker(currentMapMarker) {
+			if (currentMapMarker.hasOwnProperty('latitude')) {
+				currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.latitude,currentMapMarker.longitude);
+				var marker = new google.maps.Marker({
+				    map: map,
+				    animation: google.maps.Animation.DROP,
+				    position: currentMapMarker.coordinates
+				});
+				currentMapMarker.marker(marker);
+				createEventListener(currentMapMarker);
+			} else if (currentMapMarker.location.hasOwnProperty("coordinate")) {
+				currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.location.coordinate.latitude,currentMapMarker.location.coordinate.longitude);
+				var marker = new google.maps.Marker({
+				    map: map,
+				    animation: google.maps.Animation.DROP,
+				    position: currentMapMarker.coordinates
+				});
+				currentMapMarker.marker(marker);
+				createEventListener(currentMapMarker);
+			} else {
+				console.log(currentMapMarker.title() + 'didnt have coordinates');
+				var request = {
+				    location: mapLocation,
+				    radius: '20000',
+				    query: currentMapMarker.title()
+				};
+				var service = new google.maps.places.PlacesService(map);
+				service.textSearch(request, callback);
+
+				function callback(results, status) {
+					if (status == google.maps.places.PlacesServiceStatus.OK) {
+						console.log('found coordinates');
+						console.log(results);
+				    	currentMapMarker.coordinates = new google.maps.LatLng(results[0].geometry.location.A,results[0].geometry.location.F);
+				    	var marker = new google.maps.Marker({
+						    map: map,
+						    animation: google.maps.Animation.DROP,
+						    position: currentMapMarker.coordinates
+						});
+						currentMapMarker.marker(marker);
+						console.log(currentMapMarker);
+						createEventListener(currentMapMarker);
+					}
+				}
+			}
+		}
 	}
 }
 
@@ -105,7 +181,6 @@ function viewModel() {
 	self.locationSearch = ko.observable('');
 
 	self.checkLocation = function() {
-		console.log(self.locationSearch());
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode( { 'address': self.locationSearch()}, function(results, status) {
 	    	if (status == google.maps.GeocoderStatus.OK) {
@@ -114,7 +189,7 @@ function viewModel() {
 	       		initialize(latitude, longtitude);
 	       		//console.log(results);
 	      	} else {
-	        	alert("Location could not be found");
+	        	alert("Sorry!  We didn't recognize that location.  Please try again!");
 	      	}
 	    });
 		//initialize();
@@ -197,7 +272,7 @@ function viewModel() {
 			self.currentMapMarker().marker().setAnimation(google.maps.Animation.null);
 		}, 2100);
 
-
+		
 		// Get address based on yelp coordinates and set to currentMapMarker's address
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode( { 'location': self.currentMapMarker().coordinates}, function(results, status) {
