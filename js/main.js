@@ -326,7 +326,7 @@ function viewModel() {
 		self.infoWindow().setContent($('#info-window-template').html());
 
 		var infoWindowHeight = $('#info-window-template').height();
-		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight / 2 - 20) * -1);
+		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - 330) * -1);
 	};
 }
 
