@@ -74,7 +74,7 @@ function requestMapMarkers(lat,lng) {
 	           	for (i = 0; i < numberOfLocations; i++) {
 	           		vm.mapLocations.push( new googleMapLocation(dataObject.businesses[i]));
 	           	}
-	           	createMapMarkers(fitMapToBounds);
+	           	createMapMarkers();
 	       	}
         }
     });
@@ -109,7 +109,7 @@ var googlePlacesLocation = function(data) {
 	this._destroy = ko.observable(false)
 }
 
-function createMapMarkers(callback) {
+function createMapMarkers() {
 	var i;
 	var numberOfLocations = vm.mapLocations().length;
 	var currentMarker;
@@ -164,11 +164,8 @@ function createMapMarkers(callback) {
 			}
 			
 		}
-		/*$.when( setTheMarker() ).done(function() {
-       		map.fitBounds(bounds);
-		});*/
 	}
-	callback();
+	fitMapToBounds();
 }
 
 function fitMapToBounds() {
@@ -202,7 +199,6 @@ function viewModel() {
 	        	alert("Sorry!  We didn't recognize that location.  Please try again!");
 	      	}
 	    });
-		//initialize();
 	};
 
 	self.toggleList = function() {
