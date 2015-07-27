@@ -47,6 +47,7 @@ function requestMapMarkers(lat,lng) {
         url: 'php/request.php?lat=' + lat + '&lng=' + lng,
         success: function(data){
         	dataObject = JSON.parse(data);
+        	console.log(dataObject);
         	if (dataObject.hasOwnProperty('error')) {
         		//backup to google places search
         		var request = {
@@ -99,6 +100,7 @@ var googleMapLocation = function(data) {
 	this.stars = ko.observable(data.rating_img_url),
 	this.reviewCount = ko.observable(data.review_count),
 	this.yelpLink = ko.observable(data.url),
+	this.category = ko.observable(data.categories[0][1]);
 	this._destroy = ko.observable(false)
 }
 
@@ -121,18 +123,44 @@ function createMapMarkers() {
 	var i;
 	var numberOfLocations = vm.mapLocations().length;
 	var currentMarker;
+	var markerIcon = {
+		url: "",
+		// This marker is 20 pixels wide by 32 pixels tall.
+		size: new google.maps.Size(35, 41),
+		// The origin for this image is 0,0.
+		origin: new google.maps.Point(0,0),
+		// The anchor for this image is the base of the flagpole at 0,32.
+		anchor: new google.maps.Point(17.5, 41)
+	};
+	var shape = {
+      	coords: [10, 1, 25, 1, 34, 12, 34, 24, 19, 40, 15, 40, 1, 24, 1, 11, 10, 1],
+      	type: 'poly'
+  	};
 	for (i = 0; i < numberOfLocations; i++) {
 		currentMarker = vm.mapLocations()[i];
 		// Do inside function so it sets scope on currentMarker variable
 		setTheMarker(currentMarker,fitMapToBounds);
 		
 		function setTheMarker(currentMapMarker) {
-			if (currentMapMarker.hasOwnProperty('latitude')) {
+			if (currentMapMarker.category() === "beaches") {
+				markerIcon.url = "img/icons/beach.png";
+			} else if (currentMapMarker.category() === "hiking") {
+				markerIcon.url = "img/icons/hiking.png";
+			} else if (currentMapMarker.category() === "lakes") {
+				markerIcon.url = "img/icons/lake.png";
+			} else if (currentMapMarker.category() === "museums") {
+				markerIcon.url = "img/icons/museum.png";
+			} else if (currentMapMarker.category() === "resorts") {
+				markerIcon.url = "img/icons/resort.png";
+			}
+			if (currentMapMarker.hasOwnProperty("latitude")) {
 				currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.latitude,currentMapMarker.longitude);
 				var marker = new google.maps.Marker({
 				    map: map,
 				    animation: google.maps.Animation.DROP,
-				    position: currentMapMarker.coordinates
+				    position: currentMapMarker.coordinates,
+				    icon: markerIcon,
+				    shape: shape
 				});
 				currentMapMarker.marker(marker);
 				createEventListener(currentMapMarker);
@@ -142,7 +170,9 @@ function createMapMarkers() {
 				var marker = new google.maps.Marker({
 				    map: map,
 				    animation: google.maps.Animation.DROP,
-				    position: currentMapMarker.coordinates
+				    position: currentMapMarker.coordinates,
+				    icon: markerIcon,
+				    shape: shape
 				});
 				currentMapMarker.marker(marker);
 				createEventListener(currentMapMarker);
@@ -349,8 +379,6 @@ function viewModel() {
 		} else if (screenWidth > 650) {
 			offsetHeight = 280;
 		}
-		console.log(screenWidth);
-		console.log(offsetHeight);
 		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - offsetHeight) * -1);
 	};
 }
