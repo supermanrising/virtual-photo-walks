@@ -69,8 +69,10 @@ function requestMapMarkers(lat,lng) {
 			           		return left.title() == right.title() ? 0 : (left.title() < right.title() ? -1 : 1) 
 			           	});
 			           	createMapMarkers();
+					} else {
+						alert("Oops!  Looks like we couldn't find any photo walking areas in this location.\nTry a different location or get our there and explore for yourself!");
 					}
-				}
+				} 
         	} else {
 	           	var numberOfLocations = dataObject.businesses.length;
 	           	var i;
@@ -273,9 +275,6 @@ function viewModel() {
 	self.openInfoWindow = function(mapMarker) {
 		self.hideList();
 		self.currentMapMarker(mapMarker);
-		// Clear the current Instagram photo array and close the previous infoWindow
-		//self.instagramPhotos().length = 0;
-		//
 		if (self.infoWindow() != '') {
 			self.infoWindow().close();
 		}
@@ -308,6 +307,10 @@ function viewModel() {
 	    formattedInstaURL = 'https://api.instagram.com/v1/media/search?lat=' + lat + '&lng=' + lng + '&distance=500&client_id=' + instaID;
 	    //console.log(lat + ', ' + lng);
 	    
+	    // Timeout for Instagram JSONP request
+	    var instagramTimeout = setTimeout(function(){
+	        $(".instagram_error").css("display","inline");
+	    }, 8000);
 
 	    $.ajax({
 			type: "GET",
@@ -315,6 +318,7 @@ function viewModel() {
 			url: formattedInstaURL,
 			success: function(data) {
 				self.displayInstaPhotos(data.data);
+				clearTimeout(instagramTimeout);
 			}
 		});
 
@@ -339,7 +343,7 @@ function viewModel() {
 		var screenWidth = window.innerWidth;
 		var offsetHeight;
 		if (screenWidth <= 400) {
-			offsetHeight = 160;
+			offsetHeight = 140;
 		} else if (screenWidth > 400 && screenWidth < 650) {
 			offsetHeight = 220;
 		} else if (screenWidth > 650) {
@@ -353,5 +357,3 @@ function viewModel() {
 
 window.vm = new viewModel();
 ko.applyBindings(vm);
-
-//google.maps.event.addDomListener(window, 'load', initialize);

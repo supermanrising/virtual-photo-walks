@@ -329,6 +329,11 @@ ul {
 	border-style: none;
 }
 
+.instagram_error {
+	font-style: italic;
+	display: none;
+}
+
 @media only screen and (max-width: 600px) {
 	#splash input[type="text"] {
 		width: 80%;

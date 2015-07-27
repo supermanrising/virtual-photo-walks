@@ -60,8 +60,9 @@
           </div>
           <!-- /ko -->
           <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
+          <p class="instagram_error">Oops!  We couldn't find any Instagram photos in this location.</p>
           <ul data-bind="foreach: photos">
-            <li><a href="" target="_blank" data-bind="attr: { href: link }"><img src="" alt="" data-bind="attr: { src: images.thumbnail.url }" ></a></li>
+            <li><!--<a href="" target="_blank" data-bind="attr: { href: link }">--><img src="" alt="" data-bind="attr: { src: images.thumbnail.url }" ><!--</a>--></li>
           </ul>
         </div>
 
