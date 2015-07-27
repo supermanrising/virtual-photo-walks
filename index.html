@@ -3,22 +3,20 @@
   <head>
     <link rel="stylesheet" href="css/style.css">
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="viewport" content="width=device-width">
     <title>Vancouver Map</title>
     <script type="text/javascript"
       src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDoGCHyTEqulh1jz_wzwoa_FQ64EUl0T1I">
     </script>
   </head>
   <body>
-    <div id="splash">
+    <section id="splash">
       <h1 id="splash-title">Where Would You Like To Walk Today?</h1>
       <form data-bind="submit: checkLocation, ">
         <input type="text" id="main-search" data-bind="textInput: locationSearch" autofocus>
-        <!--<br>
-        <input type="Submit" value="Let's Walk!">-->
       </form>
-    </div>
-    <div id="app">
+    </section>
+    <section id="app">
       <div id="search">
         <form data-bind="event: { submit: updateLocations }">
             <div id="label-div">
@@ -68,7 +66,7 @@
         </div>
 
       </div>
-    </div>
+    </section>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
     <script src="js/knockout.js"></script>
     <script src="js/main.js"></script>

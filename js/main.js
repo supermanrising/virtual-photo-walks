@@ -65,6 +65,9 @@ function requestMapMarkers(lat,lng) {
 				    	for (i = 0; i < numberOfLocations; i++) {
 			           		vm.mapLocations.push( new googlePlacesLocation(results[i]));
 			           	}
+			           	vm.mapLocations.sort(function(left, right) { 
+			           		return left.title() == right.title() ? 0 : (left.title() < right.title() ? -1 : 1) 
+			           	});
 			           	createMapMarkers();
 					}
 				}
@@ -74,6 +77,9 @@ function requestMapMarkers(lat,lng) {
 	           	for (i = 0; i < numberOfLocations; i++) {
 	           		vm.mapLocations.push( new googleMapLocation(dataObject.businesses[i]));
 	           	}
+	           	vm.mapLocations.sort(function(left, right) { 
+			        return left.title() == right.title() ? 0 : (left.title() < right.title() ? -1 : 1) 
+			    });
 	           	createMapMarkers();
 	       	}
         }
@@ -203,10 +209,10 @@ function viewModel() {
 
 	self.toggleList = function() {
 		$('#list-view').animate({width: 'toggle'});
-		if ($('.relative').css('left') === '300px') {
+		if ($('.relative').css('left') === '260px') {
 			$('.relative').animate({left: '0'});
 		} else {
-			$('.relative').animate({left: '300px'});
+			$('.relative').animate({left: '260px'});
 		}
 	};
 
@@ -214,7 +220,14 @@ function viewModel() {
 		if ($('#list-view').css('display') === 'none') {
 			$('#list-view').animate({width: 'toggle'});
 		}
-		$('.relative').animate({left: '300px'});
+		$('.relative').animate({left: '260px'});
+	};
+
+	self.hideList = function() {
+		if ($('#list-view').css('display') !== 'none') {
+			$('#list-view').animate({width: 'toggle'});
+		}
+		$('.relative').animate({left: '0'});
 	};
 
 	self.toggleBgHover = function(currentListItem) {
@@ -258,6 +271,7 @@ function viewModel() {
 	self.infoWindow = ko.observable('');
 
 	self.openInfoWindow = function(mapMarker) {
+		self.hideList();
 		self.currentMapMarker(mapMarker);
 		// Clear the current Instagram photo array and close the previous infoWindow
 		//self.instagramPhotos().length = 0;
@@ -322,7 +336,18 @@ function viewModel() {
 		self.infoWindow().setContent($('#info-window-template').html());
 
 		var infoWindowHeight = $('#info-window-template').height();
-		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - 330) * -1);
+		var screenWidth = window.innerWidth;
+		var offsetHeight;
+		if (screenWidth <= 400) {
+			offsetHeight = 160;
+		} else if (screenWidth > 400 && screenWidth < 650) {
+			offsetHeight = 220;
+		} else if (screenWidth > 650) {
+			offsetHeight = 280;
+		}
+		console.log(screenWidth);
+		console.log(offsetHeight);
+		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - offsetHeight) * -1);
 	};
 }
 

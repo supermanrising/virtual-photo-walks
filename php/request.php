@@ -95,7 +95,9 @@ function search($term, $location) {
     $url_params['ll'] = $location?: $GLOBALS['DEFAULT_LOCATION'];
     $url_params['limit'] = $GLOBALS['SEARCH_LIMIT'];
     $url_params['category_filter'] = $GLOBALS['CATEGORY'];
-    $url_params['sort'] = 2;
+    // 0 = 'best matched'
+    // 2 = 'top rated'
+    $url_params['sort'] = 0;
     $search_path = $GLOBALS['SEARCH_PATH'] . "?" . http_build_query($url_params);
     
     echo request($GLOBALS['API_HOST'], $search_path);
