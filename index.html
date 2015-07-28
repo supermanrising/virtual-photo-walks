@@ -3,6 +3,13 @@
   <head>
     <link rel="stylesheet" href="css/style.css">
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
+    <!-- Photoswipe Core CSS file -->
+    <link rel="stylesheet" href="photoswipe/photoswipe.css"> 
+    <!-- Photoswipe Skin CSS file (styling of UI - buttons, caption, etc.)
+      In the folder of skin CSS file there are also:
+      - .png and .svg icons sprite, 
+      - preloader.gif (for browsers that do not support CSS animations) -->
+    <link rel="stylesheet" href="photoswipe/default-skin/default-skin.css"> 
     <meta name="viewport" content="width=device-width">
     <title>Vancouver Map</title>
     <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDoGCHyTEqulh1jz_wzwoa_FQ64EUl0T1I"></script>
@@ -27,11 +34,11 @@
         </form>
       </div>
       <div class="relative">
-        <img id="show-list" src="img/toggle-list.png" alt="Show list" data-bind="event: {click: toggleList}" >
+        <img id="show-list" src="img/toggle-list.png" alt="Show list" data-bind="click: toggleList" >
       </div>
       <div id="list-view">
         <ul data-bind="foreach: mapLocations">
-          <li data-bind="text: title, attr: {id: title}, event: {click: $root.openInfoWindow, mouseenter: function () { $root.toggleBgHover(title()); }, mouseleave: function () { $root.toggleBgLeave(title()); }}"></li>
+          <li data-bind="text: title, attr: {id: title}, click: $root.openInfoWindow, event: { mouseenter: function () { $root.toggleBgHover(title()); }, mouseleave: function () { $root.toggleBgLeave(title()); }}"></li>
         </ul>
       </div>
       <div id="location-search">
@@ -55,21 +62,94 @@
           <!-- ko if: review -->
           <blockquote id="review"><span data-bind="text: review"></span></blockquote>
           <div id="readmorelink">
-            <a href="" target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
+            <a target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
           </div>
           <!-- /ko -->
           <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
           <p class="instagram_error">Oops!  We couldn't find any Instagram photos in this location.</p>
           <ul data-bind="foreach: photos">
-            <li><!--<a href="" target="_blank" data-bind="attr: { href: link }">--><img src="" alt="" data-bind="attr: { src: images.thumbnail.url }" ><!--</a>--></li>
+            <li><img data-bind="attr: {src: images.thumbnail.url, class: $index}" onclick="vm.openGallery(this)"></li>
           </ul>
         </div>
 
       </div>
     </section>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script type="text/javascript" src="js/jquery.autocomplete.js"></script>
-    <script src="js/knockout.js"></script>
-    <script src="js/main.js"></script>
+
+    <!-- Root element of PhotoSwipe. Must have class pswp. -->
+    <div class="pswp" tabindex="-1" role="dialog" aria-hidden="true">
+
+        <!-- Background of PhotoSwipe. 
+             It's a separate element as animating opacity is faster than rgba(). -->
+        <div class="pswp__bg"></div>
+
+        <!-- Slides wrapper with overflow:hidden. -->
+        <div class="pswp__scroll-wrap">
+
+            <!-- Container that holds slides. 
+                PhotoSwipe keeps only 3 of them in the DOM to save memory.
+                Don't modify these 3 pswp__item elements, data is added later on. -->
+            <div class="pswp__container">
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+                <div class="pswp__item"></div>
+            </div>
+
+            <!-- Default (PhotoSwipeUI_Default) interface on top of sliding area. Can be changed. -->
+            <div class="pswp__ui pswp__ui--hidden">
+
+                <div class="pswp__top-bar">
+
+                    <!--  Controls are self-explanatory. Order can be changed. -->
+
+                    <div class="pswp__counter"></div>
+
+                    <button class="pswp__button pswp__button--close" title="Close (Esc)"></button>
+
+                    <button class="pswp__button pswp__button--share" title="Share"></button>
+
+                    <button class="pswp__button pswp__button--fs" title="Toggle fullscreen"></button>
+
+                    <button class="pswp__button pswp__button--zoom" title="Zoom in/out"></button>
+
+                    <!-- Preloader demo http://codepen.io/dimsemenov/pen/yyBWoR -->
+                    <!-- element will get class pswp__preloader--active when preloader is running -->
+                    <div class="pswp__preloader">
+                        <div class="pswp__preloader__icn">
+                          <div class="pswp__preloader__cut">
+                            <div class="pswp__preloader__donut"></div>
+                          </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="pswp__share-modal pswp__share-modal--hidden pswp__single-tap">
+                    <div class="pswp__share-tooltip"></div> 
+                </div>
+
+                <button class="pswp__button pswp__button--arrow--left" title="Previous (arrow left)">
+                </button>
+
+                <button class="pswp__button pswp__button--arrow--right" title="Next (arrow right)">
+                </button>
+
+                <div class="pswp__caption">
+                    <div class="pswp__caption__center"></div>
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+    <!-- End Photoswipe -->
+
   </body>
+  <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+  <script type="text/javascript" src="js/jquery.autocomplete.js"></script>
+  <!-- Photoswipe Core JS file -->
+  <script src="photoswipe/photoswipe.min.js"></script> 
+  <!-- Photoswipe UI JS file -->
+  <script src="photoswipe/photoswipe-ui-default.min.js"></script> 
+  <script src="js/knockout.js"></script>
+  <script src="js/main.js"></script>
 </html>

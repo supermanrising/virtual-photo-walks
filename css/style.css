@@ -327,6 +327,7 @@ ul {
 	width: 70px;
 	height: 70px;
 	border-style: none;
+	cursor: pointer;
 }
 
 .instagram_error {

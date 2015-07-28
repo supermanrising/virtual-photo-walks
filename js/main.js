@@ -2,6 +2,9 @@ var map;
 var geocoder;
 var mapLocation;
 var bounds = new google.maps.LatLngBounds();
+var photoSwipeItems = [];
+var pswpElement = document.querySelectorAll('.pswp')[0];
+var psOptions;
 
 function initialize(lat,lng) {
 	$("#splash").fadeOut();
@@ -27,7 +30,7 @@ function initialize(lat,lng) {
  *  http://stackoverflow.com/questions/3473367/how-to-offset-the-center-of-a-google-maps-api-v3-in-pixels
  */
 
-google.maps.Map.prototype.setCenterWithOffset= function(latlng, offsetX, offsetY) {
+google.maps.Map.prototype.setCenterWithOffset = function(latlng, offsetX, offsetY) {
     var map = this;
     var ov = new google.maps.OverlayView();
     ov.onAdd = function() {
@@ -47,7 +50,6 @@ function requestMapMarkers(lat,lng) {
         url: 'php/request.php?lat=' + lat + '&lng=' + lng,
         success: function(data){
         	dataObject = JSON.parse(data);
-        	console.log(dataObject);
         	if (dataObject.hasOwnProperty('error')) {
         		//backup to google places search
         		var request = {
@@ -102,7 +104,7 @@ var googleMapLocation = function(data) {
 	this.yelpLink = ko.observable(data.url),
 	this.category = ko.observable(data.categories[0][1]);
 	this._destroy = ko.observable(false)
-}
+};
 
 // Location Template Backup for Google Places
 var googlePlacesLocation = function(data) {
@@ -118,7 +120,14 @@ var googlePlacesLocation = function(data) {
 	this.yelpLink = ko.observable(),
 	this.category = ko.observable(null),
 	this._destroy = ko.observable(false)
-}
+};
+
+// Location Template
+var galleryPhoto = function(data) {
+	this.src = data.images.standard_resolution.url,
+	this.w = data.images.standard_resolution.width,
+	this.h = data.images.standard_resolution.height
+};
 
 function createMapMarkers() {
 	var i;
@@ -391,6 +400,7 @@ function viewModel() {
 	};
 
 	self.displayInstaPhotos = function(photos) {
+		photoSwipeItems.length = 0;
 		self.currentMapMarker().photos([]);
 		photos.sort(function(a, b) {
 			return b.likes.count - a.likes.count;
@@ -400,6 +410,7 @@ function viewModel() {
 		numberOfInstagramPhotos = instagramPhotoArray.length;
 		for (i = 0; i < numberOfInstagramPhotos; i++) {
 			self.currentMapMarker().photos.push(instagramPhotoArray[i]);
+			photoSwipeItems.push( new galleryPhoto(instagramPhotoArray[i]) );
 		}
 
 		self.infoWindow().setContent($('#info-window-template').html());
@@ -415,6 +426,19 @@ function viewModel() {
 			offsetHeight = 280;
 		}
 		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - offsetHeight) * -1);
+	};
+
+	self.openGallery = function(data) {
+		//define options (if needed)
+		psOptions = {
+		    // optionName: 'option value'
+		    // for example:
+		    index: $(data).attr('class') // start at first slide
+		};
+
+		// Initializes and opens PhotoSwipe
+		var gallery = new PhotoSwipe( pswpElement, PhotoSwipeUI_Default, photoSwipeItems, psOptions);
+		gallery.init();
 	};
 }
 
