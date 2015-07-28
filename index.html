@@ -5,9 +5,7 @@
     <link href='http://fonts.googleapis.com/css?family=Lato:300,400' rel='stylesheet' type='text/css'>
     <meta name="viewport" content="width=device-width">
     <title>Vancouver Map</title>
-    <script type="text/javascript"
-      src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDoGCHyTEqulh1jz_wzwoa_FQ64EUl0T1I">
-    </script>
+    <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDoGCHyTEqulh1jz_wzwoa_FQ64EUl0T1I"></script>
   </head>
   <body>
     <section id="splash">
@@ -23,7 +21,8 @@
               <label id="search-label" for="search">Filter</label>
             </div>
           <div id="search-input">
-            <input type="text" name="search" data-bind="textInput: searchTerm, event: { input: updateLocations, click: showList }">
+            <input type="text" name="search" id="autocomplete" style="position: absolute; z-index: 2; background: transparent;" data-bind="textInput: searchTerm, event: { input: updateLocations, click: showList }">
+            <input type="text" name="search" id="autocomplete-x" disabled="disabled" style="color: #CCC; position: absolute; background: transparent; z-index: 1;"/>
           </div>
         </form>
       </div>
@@ -69,6 +68,7 @@
       </div>
     </section>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type="text/javascript" src="js/jquery.autocomplete.js"></script>
     <script src="js/knockout.js"></script>
     <script src="js/main.js"></script>
   </body>

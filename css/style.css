@@ -334,6 +334,12 @@ ul {
 	display: none;
 }
 
+.autocomplete-suggestions { display: none; }
+.autocomplete-suggestion { display: none; }
+.autocomplete-no-suggestion { display: none; }
+.autocomplete-selected { display: none; }
+.autocomplete-group { display: none; }
+
 @media only screen and (max-width: 600px) {
 	#splash input[type="text"] {
 		width: 80%;

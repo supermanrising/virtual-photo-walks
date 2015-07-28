@@ -116,7 +116,7 @@ var googlePlacesLocation = function(data) {
 	this.stars = ko.observable(),
 	this.reviewCount = ko.observable(),
 	this.yelpLink = ko.observable(),
-	this.category = null,
+	this.category = ko.observable(null),
 	this._destroy = ko.observable(false)
 }
 
@@ -124,6 +124,7 @@ function createMapMarkers() {
 	var i;
 	var numberOfLocations = vm.mapLocations().length;
 	var currentMarker;
+	var searchItem;
 	var markerIcon = {
 		url: "",
 		// This marker is 20 pixels wide by 32 pixels tall.
@@ -143,6 +144,12 @@ function createMapMarkers() {
 		setTheMarker(currentMarker,fitMapToBounds);
 		
 		function setTheMarker(currentMapMarker) {
+			searchItem = {
+				value: currentMapMarker.title(),
+				data: currentMapMarker
+			};
+			vm.searchLocations.push(searchItem);
+
 			if (currentMapMarker.category() === "beaches") {
 				markerIcon.url = "img/icons/beach.png";
 			} else if (currentMapMarker.category() === "hiking") {
@@ -153,7 +160,7 @@ function createMapMarkers() {
 				markerIcon.url = "img/icons/museum.png";
 			} else if (currentMapMarker.category() === "resorts") {
 				markerIcon.url = "img/icons/resort.png";
-			}  else if (currentMapMarker.category === null) {
+			}  else if (currentMapMarker.category() === null) {
 				markerIcon.url = "img/icons/standard.png";
 				markerIcon.size = new google.maps.Size(22, 40);
 				markerIcon.origin = new google.maps.Point(0,0);
@@ -219,6 +226,16 @@ function createMapMarkers() {
 		}
 	}
 	fitMapToBounds();
+
+	$('#autocomplete').autocomplete({
+		lookup: vm.searchLocations,
+		onSelect: function (suggestion) {
+			vm.openInfoWindow(suggestion.data);
+		},
+		onHint: function (hint) {
+            $('#autocomplete-x').val(hint);
+        },
+	});
 }
 
 function fitMapToBounds() {
@@ -235,11 +252,13 @@ function viewModel() {
 	var self = this;
 
 	self.mapLocations = ko.observableArray([]);
+	self.searchLocations = [];
 
 	self.locationSearch = ko.observable('');
 
 	self.checkLocation = function() {
 		self.mapLocations.removeAll();
+		self.searchLocations.length = 0;
 		bounds = new google.maps.LatLngBounds();
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode( { 'address': self.locationSearch()}, function(results, status) {
@@ -249,7 +268,7 @@ function viewModel() {
 	       		initialize(latitude, longtitude);
 	       		//console.log(results);
 	      	} else {
-	        	alert("Sorry!  We didn't recognize that location.  Please try again!");
+	        	alert("Sorry!  We didn't recognize that location.");
 	      	}
 	    });
 	};
