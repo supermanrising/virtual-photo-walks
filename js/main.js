@@ -116,6 +116,7 @@ var googlePlacesLocation = function(data) {
 	this.stars = ko.observable(),
 	this.reviewCount = ko.observable(),
 	this.yelpLink = ko.observable(),
+	this.category = ko.observable("default"),
 	this._destroy = ko.observable(false)
 }
 
@@ -152,6 +153,17 @@ function createMapMarkers() {
 				markerIcon.url = "img/icons/museum.png";
 			} else if (currentMapMarker.category() === "resorts") {
 				markerIcon.url = "img/icons/resort.png";
+			}  else if (currentMapMarker.category() === "default") {
+				markerIcon.url = "img/icons/standard.png";
+				markerIcon.size = new google.maps.Size(22, 40);
+				markerIcon.origin = new google.maps.Point(0,0);
+				markerIcon.anchor = new google.maps.Point(11,40);
+				shape = {
+			      	coords: [10, 40, 10, 35, 8, 29, 0, 15, 0, 7, 6, 0, 16, 0, 22, 6, 22, 16, 15, 27, 12, 36, 12, 40, 10, 40],
+			      	type: 'poly'
+			  	};
+			} else {
+				markerIcon.url = "img/icons/default.png";
 			}
 			if (currentMapMarker.hasOwnProperty("latitude")) {
 				currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.latitude,currentMapMarker.longitude);
@@ -192,8 +204,11 @@ function createMapMarkers() {
 				    	var marker = new google.maps.Marker({
 						    map: map,
 						    animation: google.maps.Animation.DROP,
-						    position: currentMapMarker.coordinates
+						    position: currentMapMarker.coordinates,
+						    icon: markerIcon,
+				    		shape: shape
 						});
+						//marker.setIcon(null);
 						currentMapMarker.marker(marker);
 						createEventListener(currentMapMarker);
 						bounds.extend(currentMapMarker.coordinates);
