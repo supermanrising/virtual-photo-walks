@@ -68,7 +68,7 @@
           <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
           <p class="instagram_error">Oops!  We couldn't find any Instagram photos in this location.</p>
           <ul data-bind="foreach: photos">
-            <li><img data-bind="attr: {src: images.thumbnail.url, class: $index}" onclick="vm.openGallery(this)"></li>
+            <li><img data-bind="attr: {src: images.thumbnail.url, id: $index}" onclick="vm.openGallery(this)" class="gallery-thumb"></li>
           </ul>
         </div>
 

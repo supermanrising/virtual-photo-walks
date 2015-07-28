@@ -124,9 +124,14 @@ var googlePlacesLocation = function(data) {
 
 // Location Template
 var galleryPhoto = function(data) {
-	this.src = data.images.standard_resolution.url,
-	this.w = data.images.standard_resolution.width,
-	this.h = data.images.standard_resolution.height
+	this.src = data.images.standard_resolution.url;
+	this.w = data.images.standard_resolution.width;
+	this.h = data.images.standard_resolution.height;
+	this.msrc = data.images.thumbnail.url;
+	if (data.caption != null) {
+		this.title = data.caption.text;
+		this.username = data.caption.from.username;
+	}
 };
 
 function createMapMarkers() {
@@ -433,7 +438,37 @@ function viewModel() {
 		psOptions = {
 		    // optionName: 'option value'
 		    // for example:
-		    index: $(data).attr('class') // start at first slide
+		    index: parseInt($(data).attr('id')), // start at first slide
+		    bgOpacity: .7,
+		    shareEl: false,
+		    getThumbBoundsFn: function(index) {
+			    // find thumbnail element
+			    var thumbnail = document.querySelectorAll('.gallery-thumb')[index];;
+
+			    // get window scroll Y
+			    var pageYScroll = window.pageYOffset || document.documentElement.scrollTop; 
+			    // optionally get horizontal scroll
+
+			    // get position of element relative to viewport
+			    var rect = thumbnail.getBoundingClientRect(); 
+
+			    // w = width
+			    return {x:rect.left, y:rect.top + pageYScroll, w:rect.width};
+			},
+			// Function builds caption markup
+			addCaptionHTMLFn: function(item, captionEl, isFake) {
+			    // item      - slide object
+			    // captionEl - caption DOM element
+			    // isFake    - true when content is added to fake caption container
+			    //             (used to get size of next or previous caption)
+
+			    if(!item.title) {
+			        captionEl.children[0].innerHTML = '';
+			        return false;
+			    }
+			    captionEl.children[0].innerHTML = item.title + '<br><small>Photographer: <a href="http://instagram.com/' + item.username + '" target="_blank" class="caption-link">' + item.username + '</a></small>';
+			    return true;
+			}
 		};
 
 		// Initializes and opens PhotoSwipe

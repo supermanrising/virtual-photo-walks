@@ -335,6 +335,16 @@ ul {
 	display: none;
 }
 
+.pswp__caption__center a {
+	text-decoration: none;
+	color: #bbb;
+	padding-left: 3px;
+}
+
+.pswp__caption__center a:hover {
+	text-decoration: underline;
+}
+
 .autocomplete-suggestions { display: none; }
 .autocomplete-suggestion { display: none; }
 .autocomplete-no-suggestion { display: none; }
