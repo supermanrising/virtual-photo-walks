@@ -116,7 +116,7 @@ var googlePlacesLocation = function(data) {
 	this.stars = ko.observable(),
 	this.reviewCount = ko.observable(),
 	this.yelpLink = ko.observable(),
-	this.category = ko.observable("default"),
+	this.category = null,
 	this._destroy = ko.observable(false)
 }
 
@@ -153,7 +153,7 @@ function createMapMarkers() {
 				markerIcon.url = "img/icons/museum.png";
 			} else if (currentMapMarker.category() === "resorts") {
 				markerIcon.url = "img/icons/resort.png";
-			}  else if (currentMapMarker.category() === "default") {
+			}  else if (currentMapMarker.category === null) {
 				markerIcon.url = "img/icons/standard.png";
 				markerIcon.size = new google.maps.Size(22, 40);
 				markerIcon.origin = new google.maps.Point(0,0);
@@ -296,6 +296,7 @@ function viewModel() {
 		self.mapLocations().forEach(function(entry) {
 			//console.log(entry.title().indexOf(self.searchTerm()));
 			if (entry.title().toLowerCase().indexOf(self.searchTerm().toLowerCase()) >= 0 ||
+				entry.category().indexOf(self.searchTerm().toLowerCase()) >= 0 ||
 				self.searchTerm() == '') {
 				entry._destroy(false);
 				entry.marker().setVisible(true);
