@@ -3,18 +3,16 @@ var gulp = require('gulp');
  
 // include plug-ins
 var jshint = require('gulp-jshint');
-//var changed = require('gulp-changed');
-//var imagemin = require('gulp-imagemin');
-//var minifyHTML = require('gulp-minify-html');
-//var minifyCSS = require('gulp-minify-css');
-//var stripDebug = require('gulp-strip-debug');
-//var uglify = require('gulp-uglify');
-var serve = require('gulp-serve');
-var browserSync = require('browser-sync');
+var changed = require('gulp-changed');
+var imagemin = require('gulp-imagemin');
+var minifyHTML = require('gulp-minify-html');
+var minifyCSS = require('gulp-minify-css');
+var stripDebug = require('gulp-strip-debug');
+var uglify = require('gulp-uglify');
  
 // JS hint task
 gulp.task('jshint', function() {
-  gulp.src('./views/js/*.js')
+  gulp.src('./js/*.js')
     .pipe(jshint())
     .pipe(jshint.reporter('default'));
 });
@@ -87,7 +85,7 @@ gulp.task('views-cssmin', function() {
 
 // JS strip debugging and minify
 gulp.task('scripts', function() {
-  var jsSrc = './js/*.js',
+  var jsSrc = ['./js/*.js'],
       jsDst = './minified/js';
 
   gulp.src(jsSrc)
@@ -107,15 +105,4 @@ gulp.task('views-scripts', function() {
     .pipe(stripDebug())
     .pipe(uglify())
     .pipe(gulp.dest(jsDst));
-});
-
-// Static server
-gulp.task('serve', function() {
-    browserSync.init({
-      server: {
-        baseDir: "php",
-        index: "request.php"
-      },
-      port: 8080
-    });
 });
