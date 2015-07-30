@@ -57,9 +57,9 @@ google.maps.Map.prototype.setCenterWithOffset = function(latlng, offsetX, offset
         aPoint.x = aPoint.x+offsetX;
         aPoint.y = aPoint.y+offsetY;
         map.panTo(proj.fromContainerPixelToLatLng(aPoint));
-    }; 
-    ov.draw = function() {}; 
-    ov.setMap(this); 
+    };
+    ov.draw = function() {};
+    ov.setMap(this);
 };
 
 /** @desc Request photo walk locations from Yelp.com
@@ -85,7 +85,7 @@ function requestMapMarkers(lat,lng) {
 				var service = new google.maps.places.PlacesService(map);
 				service.nearbySearch(request, callback);
 
-				function callback(results, status) {
+				var callback = function(results, status) {
 					if (status == google.maps.places.PlacesServiceStatus.OK) {
 				    	var numberOfLocations = results.length;
 	           			var i;
@@ -97,7 +97,7 @@ function requestMapMarkers(lat,lng) {
 
 			           	// Sort vm.mapLocations alphabetically
 			           	vm.mapLocations.sort(function(left, right) {
-			           		return left.title() == right.title() ? 0 : (left.title() < right.title() ? -1 : 1) 
+			           		return left.title() == right.title() ? 0 : (left.title() < right.title() ? -1 : 1);
 			           	});
 
 			           	createMapMarkers();
@@ -105,7 +105,7 @@ function requestMapMarkers(lat,lng) {
 					} else {
 						alert("Oops!  Looks like we couldn't find any photo walking areas in this location.\nTry a different location or get our there and explore for yourself!");
 					}
-				} 
+				};
         	} else { // If Yelp returns locations
 	           	var numberOfLocations = dataObject.businesses.length;
 	           	var i;
@@ -117,7 +117,7 @@ function requestMapMarkers(lat,lng) {
 
 	           	// Sort vm.mapLocations alphabetically
 	           	vm.mapLocations.sort(function(left, right) {
-			        return left.title() == right.title() ? 0 : (left.title() < right.title() ? -1 : 1) 
+			        return left.title() == right.title() ? 0 : (left.title() < right.title() ? -1 : 1);
 			    });
 
 	           	createMapMarkers();
@@ -214,7 +214,7 @@ var galleryPhoto = function(data) {
 	this.h = data.images.standard_resolution.height;
 
 	// Get caption data if caption exists
-	if (data.caption != null) {
+	if (data.caption !== null) {
 		this.title = data.caption.text;
 	}
 
@@ -239,10 +239,128 @@ function createMapMarkers() {
 		// The anchor for this image is at 17.5,41. (middle bottom)
 		anchor: new google.maps.Point(17.5, 41)
 	};
-	var shape = {			// The clickable region of the markerIcon, defined by x,y coordinates		
+	var shape = {			// The clickable region of the markerIcon, defined by x,y coordinates
       	coords: [10, 1, 25, 1, 34, 12, 34, 24, 19, 40, 15, 40, 1, 24, 1, 11, 10, 1],
       	type: 'poly'
   	};
+
+  	/** @desc This function creates a map marker for each location, and extends the global 'bounds' variable by each marker's coordinates
+	  	  * It also creates a search object from each location, and pushes to vm.searchLocations array (for autocomplete)
+	  	  * @param {object} currentMapMarker - The function is called once for each map location, this parameter defines the current location
+	  	  */
+  	function setTheMarker(currentMapMarker) {
+  		// The search item that autocomplete will use
+		searchItem = {
+			value: currentMapMarker.title(),	// the value to autocomplete
+			data: currentMapMarker				// data to be used by autocomplete when value is selected
+		};
+		vm.searchLocations.push(searchItem);
+		var marker;
+
+		// Define markerIcon based on currentMapMarker category
+		if (currentMapMarker.category() === "beaches") {
+			markerIcon.url = "img/icons/beach.png";
+		} else if (currentMapMarker.category() === "hiking") {
+			markerIcon.url = "img/icons/hiking.png";
+		} else if (currentMapMarker.category() === "lakes") {
+			markerIcon.url = "img/icons/lake.png";
+		} else if (currentMapMarker.category() === "museums") {
+			markerIcon.url = "img/icons/museum.png";
+		} else if (currentMapMarker.category() === "resorts") {
+			markerIcon.url = "img/icons/resort.png";
+		}  else if (currentMapMarker.category() === null) { // Google Places does not send a category, so use a backup generic markerIcon instead
+			markerIcon.url = "img/icons/standard.png";
+			markerIcon.size = new google.maps.Size(22, 40);
+			markerIcon.origin = new google.maps.Point(0,0);
+			markerIcon.anchor = new google.maps.Point(11,40);
+			shape = {
+		      	coords: [10, 40, 10, 35, 8, 29, 0, 15, 0, 7, 6, 0, 16, 0, 22, 6, 22, 16, 15, 27, 12, 36, 12, 40, 10, 40],
+		      	type: 'poly'
+		  	};
+		} else { // If Yelp returns a category not defined, use a generic markerIcon
+			markerIcon.url = "img/icons/default.png";
+		}
+
+		/* Do we have latitude and longitude coordinates?
+		 * (This will run if locations results have been returned by Google Places)
+		 */
+		if (currentMapMarker.hasOwnProperty("latitude")) {
+
+			// save the coordinates in the currentMapMarker as a Google.maps.LatLng object
+			currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.latitude,currentMapMarker.longitude);
+
+			marker = new google.maps.Marker({
+			    map: map,
+			    animation: google.maps.Animation.DROP,
+			    position: currentMapMarker.coordinates,
+			    icon: markerIcon,
+			    shape: shape
+			});
+
+			currentMapMarker.marker(marker);				// Save the marker data in the currentMapMarker object
+			createEventListener(currentMapMarker);			// Create a click event listener
+			bounds.extend(currentMapMarker.coordinates);	// Extend bounds to include currentMapMarker location
+
+		}
+		// This will run if locations resutls have been returned from Yelp and we recieved coordinates
+		else if (currentMapMarker.location.hasOwnProperty("coordinate")) {
+
+			// save the coordinates in the currentMapMarker as a Google.maps.LatLng object
+			currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.location.coordinate.latitude,currentMapMarker.location.coordinate.longitude);
+
+			marker = new google.maps.Marker({
+			    map: map,
+			    animation: google.maps.Animation.DROP,
+			    position: currentMapMarker.coordinates,
+			    icon: markerIcon,
+			    shape: shape
+			});
+
+			currentMapMarker.marker(marker);				// Save the marker data in the currentMapMarker object
+			createEventListener(currentMapMarker);			// Create a click event listener
+			bounds.extend(currentMapMarker.coordinates);	// Extend bounds to include currentMapMarker location
+		}
+		// If we don't have coordinates, search google places using the currentMapMarker's title
+		else {
+			var request = {
+			    location: mapLocation,
+			    radius: '20000',
+			    query: currentMapMarker.title()
+			};
+			var service = new google.maps.places.PlacesService(map);
+			service.textSearch(request, googleCallback);
+
+			var googleCallback = function(results, status) {
+				// Did the google places search work?
+				if (status == google.maps.places.PlacesServiceStatus.OK) {
+
+					// save the coordinates in the currentMapMarker as a Google.maps.LatLng object
+					var locCoors = [];
+					for( var key in results[0].geometry.location ) {
+						if ( results[0].geometry.location.hasOwnProperty(key) ) {
+						    locCoors.push(results[0].geometry.location[key]);
+						}
+					}
+			    	currentMapMarker.coordinates = new google.maps.LatLng(locCoors[0],locCoors[1]);
+
+			    	marker = new google.maps.Marker({
+					    map: map,
+					    animation: google.maps.Animation.DROP,
+					    position: currentMapMarker.coordinates,
+					    icon: markerIcon,
+			    		shape: shape
+					});
+
+					currentMapMarker.marker(marker);				// Save the marker data in the currentMapMarker object
+					createEventListener(currentMapMarker);			// Create a click event listener
+					bounds.extend(currentMapMarker.coordinates);	// Extend bounds to include currentMapMarker location
+				} else {
+					// alert the user of failure
+					alert("Oops!  Looks like we couldn't find any photo walking areas in this location.\nTry a different location or get our there and explore for yourself!");
+				}
+			}; // end googleCallback
+		} // end if statement
+	} // end setTheMarker
 
   	/** This loop calls the setTheMarker() function for each location
   	  *	Using a function encloses the current location in the function's scope
@@ -251,124 +369,7 @@ function createMapMarkers() {
 	for (i = 0; i < numberOfLocations; i++) {
 		currentMarker = vm.mapLocations()[i];
 		setTheMarker(currentMarker);
-
-		/** @desc This function creates a map marker for each location, and extends the global 'bounds' variable by each marker's coordinates
-	  	  * It also creates a search object from each location, and pushes to vm.searchLocations array (for autocomplete)
-	  	  * @param {object} currentMapMarker - The function is called once for each map location, this parameter defines the current location
-	  	  */
-	  	function setTheMarker(currentMapMarker) {
-	  		// The search item that autocomplete will use
-			searchItem = {
-				value: currentMapMarker.title(),	// the value to autocomplete
-				data: currentMapMarker				// data to be used by autocomplete when value is selected
-			};
-			vm.searchLocations.push(searchItem);
-
-			// Define markerIcon based on currentMapMarker category
-			if (currentMapMarker.category() === "beaches") {
-				markerIcon.url = "img/icons/beach.png";
-			} else if (currentMapMarker.category() === "hiking") {
-				markerIcon.url = "img/icons/hiking.png";
-			} else if (currentMapMarker.category() === "lakes") {
-				markerIcon.url = "img/icons/lake.png";
-			} else if (currentMapMarker.category() === "museums") {
-				markerIcon.url = "img/icons/museum.png";
-			} else if (currentMapMarker.category() === "resorts") {
-				markerIcon.url = "img/icons/resort.png";
-			}  else if (currentMapMarker.category() === null) { // Google Places does not send a category, so use a backup generic markerIcon instead
-				markerIcon.url = "img/icons/standard.png";
-				markerIcon.size = new google.maps.Size(22, 40);
-				markerIcon.origin = new google.maps.Point(0,0);
-				markerIcon.anchor = new google.maps.Point(11,40);
-				shape = {
-			      	coords: [10, 40, 10, 35, 8, 29, 0, 15, 0, 7, 6, 0, 16, 0, 22, 6, 22, 16, 15, 27, 12, 36, 12, 40, 10, 40],
-			      	type: 'poly'
-			  	};
-			} else { // If Yelp returns a category not defined, use a generic markerIcon
-				markerIcon.url = "img/icons/default.png";
-			}
-
-			/* Do we have latitude and longitude coordinates?
-			 * (This will run if locations results have been returned by Google Places)
-			 */
-			if (currentMapMarker.hasOwnProperty("latitude")) {
-
-				// save the coordinates in the currentMapMarker as a Google.maps.LatLng object
-				currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.latitude,currentMapMarker.longitude);
-
-				var marker = new google.maps.Marker({
-				    map: map,
-				    animation: google.maps.Animation.DROP,
-				    position: currentMapMarker.coordinates,
-				    icon: markerIcon,
-				    shape: shape
-				});
-
-				currentMapMarker.marker(marker);				// Save the marker data in the currentMapMarker object
-				createEventListener(currentMapMarker);			// Create a click event listener
-				bounds.extend(currentMapMarker.coordinates);	// Extend bounds to include currentMapMarker location
-
-			} 
-			// This will run if locations resutls have been returned from Yelp and we recieved coordinates
-			else if (currentMapMarker.location.hasOwnProperty("coordinate")) {
-
-				// save the coordinates in the currentMapMarker as a Google.maps.LatLng object
-				currentMapMarker.coordinates = new google.maps.LatLng(currentMapMarker.location.coordinate.latitude,currentMapMarker.location.coordinate.longitude);
-				
-				var marker = new google.maps.Marker({
-				    map: map,
-				    animation: google.maps.Animation.DROP,
-				    position: currentMapMarker.coordinates,
-				    icon: markerIcon,
-				    shape: shape
-				});
-
-				currentMapMarker.marker(marker);				// Save the marker data in the currentMapMarker object
-				createEventListener(currentMapMarker);			// Create a click event listener
-				bounds.extend(currentMapMarker.coordinates);	// Extend bounds to include currentMapMarker location
-			} 
-			// If we don't have coordinates, search google places using the currentMapMarker's title
-			else {
-				var request = {
-				    location: mapLocation,
-				    radius: '20000',
-				    query: currentMapMarker.title()
-				};
-				var service = new google.maps.places.PlacesService(map);
-				service.textSearch(request, googleCallback);
-
-				function googleCallback(results, status) {
-					// Did the google places search work?
-					if (status == google.maps.places.PlacesServiceStatus.OK) {
-
-						// save the coordinates in the currentMapMarker as a Google.maps.LatLng object
-						var locCoors = [];
-						for( var key in results[0].geometry.location ) {
-							if ( results[0].geometry.location.hasOwnProperty(key) ) {
-							    locCoors.push(results[0].geometry.location[key]);
-							}
-						}
-				    	currentMapMarker.coordinates = new google.maps.LatLng(locCoors[0],locCoors[1]);
-				    	
-				    	var marker = new google.maps.Marker({
-						    map: map,
-						    animation: google.maps.Animation.DROP,
-						    position: currentMapMarker.coordinates,
-						    icon: markerIcon,
-				    		shape: shape
-						});
-
-						currentMapMarker.marker(marker);				// Save the marker data in the currentMapMarker object
-						createEventListener(currentMapMarker);			// Create a click event listener
-						bounds.extend(currentMapMarker.coordinates);	// Extend bounds to include currentMapMarker location
-					} else {
-						// alert the user of failure
-						alert("Oops!  Looks like we couldn't find any photo walking areas in this location.\nTry a different location or get our there and explore for yourself!");
-					}
-				} // end googleCallback
-			} // end if statement
-		} // end setTheMarker
-	} // end for loop
+	}
 
 	fitMapToBounds();
 
@@ -505,8 +506,9 @@ function viewModel() {
 	  * Hides or shows locations based on searchTerm
 	  */
 	self.updateLocations = function() {
-		// Close current infoWindow
-		if (self.infoWindow() != '') {
+		// Has the infoWindow already been defined?
+		if (self.infoWindow() !== '') {
+			// Close current infoWindow
 			self.infoWindow().close();
 		}
 
@@ -515,7 +517,7 @@ function viewModel() {
 			// Does the mapLocation title or category contain the searchTerm, or is the search term empty?
 			if (entry.title().toLowerCase().indexOf(self.searchTerm().toLowerCase()) >= 0 ||
 			entry.category().indexOf(self.searchTerm().toLowerCase()) >= 0 ||
-			self.searchTerm() == '') {
+			self.searchTerm() === '') {
 				entry._destroy(false); 				// show the list item
 				entry.marker().setVisible(true); 	// show the map marker
 			} else {
@@ -545,7 +547,7 @@ function viewModel() {
 
 		self.currentMapMarker(mapMarker);
 		// Has the infoWindow variable already been set?
-		if (self.infoWindow() != '') {
+		if (self.infoWindow() !== '') {
 			self.infoWindow().close(); // close the infoWindow
 		}
 
@@ -564,7 +566,7 @@ function viewModel() {
 			self.currentMapMarker().marker().setAnimation(google.maps.Animation.null);
 		}, 2100);
 
-		
+
 		// Get address based currentMapMarker coordinates
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode( { 'location': self.currentMapMarker().coordinates}, function(results, status) {
@@ -581,7 +583,7 @@ function viewModel() {
 
 	    // url for the Instagram AJAX request
 	    formattedInstaURL = 'https://api.instagram.com/v1/media/search?lat=' + lat + '&lng=' + lng + '&distance=500&client_id=' + instaID;
-	    
+
 	    // Timeout incase of error on Instagram AJAX request
 	    var instagramTimeout = setTimeout(function(){
 	        $(".instagram_error").css("display","inline"); // set '.instagram_error' element to visible
@@ -629,18 +631,19 @@ function viewModel() {
 		  */
 		var infoWindowHeight = $('#info-window-template').height();		// Get the height of the current infoWindow
 		var screenWidth = window.innerWidth;							// Get the width of the user's screen
+		var offsetHeight;
 
 		// Is the user's screen less than 400px wide?
 		if (screenWidth <= 400) {
-			var offsetHeight = 140; 									// set offsetHeight to 140px
-		} 
+			offsetHeight = 140; 									// set offsetHeight to 140px
+		}
 		// Is the user's screen between 400px and 650px wide?
 		else if (screenWidth > 400 && screenWidth < 650) {
-			var offsetHeight = 220;										// set offsetHeight to 220px
-		} 
+			offsetHeight = 220;										// set offsetHeight to 220px
+		}
 		// Is the user's screen wider than 650px?
 		else {
-			var offsetHeight = 280;										// set offsetHeight to 280px
+			offsetHeight = 280;										// set offsetHeight to 280px
 		}
 
 		// Call function to center map on infoWindow with height offset
@@ -656,7 +659,7 @@ function viewModel() {
 		// define photoswipe options
 		psOptions = {
 		    index: parseInt($(data).attr('id')), 	// which photo to open?  Gets photo number from the ID of the photo that was clicked
-		    bgOpacity: .7, 							// sets photoswipe background to 70% opacity
+		    bgOpacity: '.7', 							// sets photoswipe background to 70% opacity
 		    shareEl: false,							// removes share link
 
 		    /** @desc This function calculates the boundaries of the thumbnail image for zoom-in/out animation
@@ -665,13 +668,13 @@ function viewModel() {
  		      */
 		    getThumbBoundsFn: function(index) {
 			    // find thumbnail element
-			    var thumbnail = document.querySelectorAll('.gallery-thumb')[index];;
+			    var thumbnail = document.querySelectorAll('.gallery-thumb')[index];
 
 			    // get window scroll Y
-			    var pageYScroll = window.pageYOffset || document.documentElement.scrollTop; 
+			    var pageYScroll = window.pageYOffset || document.documentElement.scrollTop;
 
 			    // get position of element relative to viewport
-			    var rect = thumbnail.getBoundingClientRect(); 
+			    var rect = thumbnail.getBoundingClientRect();
 
 			    // w = width
 			    return {x:rect.left, y:rect.top + pageYScroll, w:rect.width};
