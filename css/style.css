@@ -1,7 +1,17 @@
+/***************************
+****************************
+Global Styles
+****************************
+***************************/
+
 html, body {
 	height: 100%;
 	margin: 0;
 	padding: 0;
+}
+
+body {
+	font-family: 'Lato', sans-serif;
 }
 
 #map-canvas {
@@ -10,6 +20,29 @@ html, body {
 	margin: 0;
 	padding: 0;
 }
+
+#app {
+	display: none;
+	margin: 0;
+	padding: 0;
+}
+
+h1 {
+	font-weight: 500;
+	margin-bottom: 3px;
+}
+
+h4 {
+	font-weight: 300;
+	margin-bottom: 5px;
+
+}
+
+/***************************
+****************************
+Splash elements
+****************************
+***************************/
 
 #splash {
 	width: 100%;
@@ -42,29 +75,93 @@ html, body {
 	box-shadow: none;
 }
 
-input[type="submit"] {
+#splash-title {
+	font-size: 36px;
+	font-weight: 300;
+	padding-top: 160px;
+	padding-bottom: 15px;
+	padding-left: 10px;
+	padding-right: 10px;
 	margin: 0;
-    font-size: 18px;
-    width: 200px;
-    height: 50px;
-    margin-top: 10px;
-    text-align: center;
-    box-sizing: border-box;
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    -webkit-user-select: none;
-    cursor: default;
-    color: #000000;
-    border: #000000 solid 1px;
-    padding: 10px;
-    background-color: #ffffff;
 }
 
-input[type="submit"]:hover {
-	cursor: pointer;
-	color: #ffffff;
-    background-color: #000000;
+/***************************
+****************************
+Filter search
+****************************
+***************************/
+
+#search {
+	width: 100%;
+	height: 36px;
+	border-bottom: 1px #cccccc solid;
 }
+
+#label-div {
+	float: left;
+	width: 80px;
+	text-align: center;
+	height: 36px;
+	background-color: #f3f3f3;
+	border-right: 1px #cccccc solid;
+}
+
+#search-label {
+	font-weight: 300;
+	font-size: 17px;
+	line-height: 36px;
+}
+
+#search-input {
+	margin-left: 81px;
+	position: relative;
+}
+
+input[type="text"] {
+	margin: 0;
+	width: 100%;
+	box-sizing: border-box;
+	font-family: sans-serif;
+	font-size: 16px;
+	line-height: 36px;
+	font-weight: 300;
+	appearance: none;
+	border-radius: none;
+	padding: 0 8px;
+	border: none;
+	transition: box-shadow 0.3s, border 0.3s;
+	box-shadow: none;
+}
+
+input[type="text"]:focus {
+	outline: none;
+	box-shadow: 0 0 5px 0 #969696;
+}
+
+#autocomplete {
+	position: absolute;
+	z-index: 2;
+	background: transparent;
+}
+
+#autocomplete-x {
+	color: #CCC;
+	position: absolute;
+	background: transparent;
+	z-index: 1;
+}
+
+.autocomplete-suggestions { display: none; }
+.autocomplete-suggestion { display: none; }
+.autocomplete-no-suggestion { display: none; }
+.autocomplete-selected { display: none; }
+.autocomplete-group { display: none; }
+
+/***************************
+****************************
+Location search
+****************************
+***************************/
 
 #location-search {
 	width: 200px;
@@ -120,36 +217,11 @@ input[type="submit"]:hover {
     background-color: #000000;
 }
 
-#app {
-	display: none;
-	margin: 0;
-	padding: 0;
-}
-
-h1 {
-	font-weight: 500;
-	margin-bottom: 3px;
-}
-
-#splash-title {
-	font-size: 36px;
-	font-weight: 300;
-	padding-top: 160px;
-	padding-bottom: 15px;
-	padding-left: 10px;
-	padding-right: 10px;
-	margin: 0;
-}
-
-h4 {
-	font-weight: 300;
-	margin-bottom: 5px;
-
-}
-
-body {
-	font-family: 'Lato', sans-serif;
-}
+/***************************
+****************************
+Location list
+****************************
+***************************/
 
 #list-view {
 	float:left;
@@ -173,52 +245,6 @@ body {
 	cursor: pointer;
 }
 
-#search {
-	width: 100%;
-	height: 36px;
-	border-bottom: 1px #cccccc solid;
-}
-
-#label-div {
-	float: left;
-	width: 80px;
-	text-align: center;
-	height: 36px;
-	background-color: #f3f3f3;
-	border-right: 1px #cccccc solid;
-}
-
-#search-label {
-	font-weight: 300;
-	font-size: 17px;
-	line-height: 36px;
-}
-
-#search-input {
-	margin-left: 81px;
-}
-
-input[type="text"] {
-	margin: 0;
-	width: 100%;
-	box-sizing: border-box;
-	font-family: sans-serif;
-	font-size: 16px;
-	line-height: 36px;
-	font-weight: 300;
-	appearance: none;
-	border-radius: none;
-	padding: 0 8px;
-	border: none;
-	transition: box-shadow 0.3s, border 0.3s;
-	box-shadow: none;
-}
-
-input[type="text"]:focus {
-	outline: none;
-	box-shadow: 0 0 5px 0 #969696;
-}
-
 ul {
 	padding: 0;
 	margin: 0;
@@ -235,6 +261,12 @@ ul {
 	cursor: pointer;
 	background-color: #fff;
 }
+
+/***************************
+****************************
+Info Window
+****************************
+***************************/
 
 #info-window-inner {
 	max-width: 290px;
@@ -335,6 +367,12 @@ ul {
 	display: none;
 }
 
+/***************************
+****************************
+Photoswipe
+****************************
+***************************/
+
 .pswp__caption__center a {
 	text-decoration: none;
 	color: #bbb;
@@ -345,11 +383,11 @@ ul {
 	text-decoration: underline;
 }
 
-.autocomplete-suggestions { display: none; }
-.autocomplete-suggestion { display: none; }
-.autocomplete-no-suggestion { display: none; }
-.autocomplete-selected { display: none; }
-.autocomplete-group { display: none; }
+/***************************
+****************************
+Media queries
+****************************
+***************************/
 
 @media only screen and (max-width: 600px) {
 	#splash input[type="text"] {
