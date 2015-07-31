@@ -4,7 +4,7 @@ Ever wanted to go on a photo walk but just couldn't find the energy to go outsid
 
 ### Location of Files
 
-* Demo website is location at [ryanvrba.com/virtualphotowalks](http://ryanvrba.com/virtualphotowalks)
+* Demo website is located [here](http://footprintseducation.org/vfw/)
 * Production ready files are located in the [build](build/) folder (minified using Gulp)
 
 ### Quick Setup
@@ -73,8 +73,6 @@ Virtual Photo Walks uses the following Javascript libraries / extensions:
 ```
 
 ### References / Citations
-
-REFERENCES:
 
 https://github.com/Yelp/yelp-api/tree/master/v2/php
 http://knockoutjs.com/documentation/
