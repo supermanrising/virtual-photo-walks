@@ -74,22 +74,22 @@ Virtual Photo Walks uses the following Javascript libraries / extensions:
 
 ### References / Citations
 
-https://github.com/Yelp/yelp-api/tree/master/v2/php
-http://knockoutjs.com/documentation/
-http://stackoverflow.com/questions/22000077/how-to-request-larger-images-from-yelp-api
-https://instagram.com/developer/?hl=en
-http://www.w3schools.com/php/php_ajax_php.asp
-http://www.w3schools.com/php/php_ajax_database.asp
-http://labs.jonsuh.com/jquery-ajax-php-json/
-http://iviewsource.com/codingtutorials/learning-how-to-use-jquery-ajax-with-php-video-tutorial/
-http://stackoverflow.com/questions/14470081/jquery-slidetoggle-horizontal-alternative
-http://stackoverflow.com/questions/6037712/how-to-float-a-div-over-google-maps
-http://api.jquery.com/animate/
-http://api.jquery.com/css/
-http://stackoverflow.com/questions/5375449/how-to-hide-a-div-with-jquery
-http://codepen.io/bartekd/pen/qFsDf
-http://stackoverflow.com/questions/5219175/width-100-padding
-https://developers.google.com/maps/documentation/javascript/markers
-https://github.com/devbridge/jQuery-Autocomplete
-http://photoswipe.com/documentation/
-http://javascript.info/tutorial/coordinates
+* https://github.com/Yelp/yelp-api/tree/master/v2/php
+* http://knockoutjs.com/documentation/
+* http://stackoverflow.com/questions/22000077/how-to-request-larger-images-from-yelp-api
+* https://instagram.com/developer/?hl=en
+* http://www.w3schools.com/php/php_ajax_php.asp
+* http://www.w3schools.com/php/php_ajax_database.asp
+* http://labs.jonsuh.com/jquery-ajax-php-json/
+* http://iviewsource.com/codingtutorials/learning-how-to-use-jquery-ajax-with-php-video-tutorial/
+* http://stackoverflow.com/questions/14470081/jquery-slidetoggle-horizontal-alternative
+* http://stackoverflow.com/questions/6037712/how-to-float-a-div-over-google-maps
+* http://api.jquery.com/animate/
+* http://api.jquery.com/css/
+* http://stackoverflow.com/questions/5375449/how-to-hide-a-div-with-jquery
+* http://codepen.io/bartekd/pen/qFsDf
+* http://stackoverflow.com/questions/5219175/width-100-padding
+* https://developers.google.com/maps/documentation/javascript/markers
+* https://github.com/devbridge/jQuery-Autocomplete
+* http://photoswipe.com/documentation/
+* http://javascript.info/tutorial/coordinates
