@@ -85,7 +85,7 @@ function requestMapMarkers(lat,lng) {
 				var service = new google.maps.places.PlacesService(map);
 				service.nearbySearch(request, callback);
 
-				var callback = function(results, status) {
+				function callback(results, status) {
 					if (status == google.maps.places.PlacesServiceStatus.OK) {
 				    	var numberOfLocations = results.length;
 	           			var i;
@@ -105,7 +105,7 @@ function requestMapMarkers(lat,lng) {
 					} else {
 						alert("Oops!  Looks like we couldn't find any photo walking areas in this location.\nTry a different location or get our there and explore for yourself!");
 					}
-				};
+				}
         	} else { // If Yelp returns locations
 	           	var numberOfLocations = dataObject.businesses.length;
 	           	var i;
@@ -153,6 +153,8 @@ var googleMapLocation = function(data) {
 	this.yelpLink = ko.observable(data.url);
 	this.category = ko.observable(data.categories[0][1]);
 	this._destroy = ko.observable(false);
+	this.showReview = ko.observable(false);
+	this.showStars = ko.observable(false);
 };
 
 /** @constructor
@@ -197,6 +199,8 @@ var googlePlacesLocation = function(data) {
 	this.yelpLink = ko.observable();		// not used, but defined because some functions may request it
 	this.category = ko.observable(null);
 	this._destroy = ko.observable(false);
+	this.showReview = ko.observable(false);
+	this.showStars = ko.observable(false);
 };
 
 /** @constructor
@@ -330,7 +334,7 @@ function createMapMarkers() {
 			var service = new google.maps.places.PlacesService(map);
 			service.textSearch(request, googleCallback);
 
-			var googleCallback = function(results, status) {
+			function googleCallback(results, status) {
 				// Did the google places search work?
 				if (status == google.maps.places.PlacesServiceStatus.OK) {
 
@@ -358,7 +362,7 @@ function createMapMarkers() {
 					// alert the user of failure
 					alert("Oops!  Looks like we couldn't find any photo walking areas in this location.\nTry a different location or get our there and explore for yourself!");
 				}
-			}; // end googleCallback
+			} // end googleCallback
 		} // end if statement
 	} // end setTheMarker
 
@@ -550,6 +554,14 @@ function viewModel() {
 		if (self.infoWindow() !== '') {
 			self.infoWindow().close(); // close the infoWindow
 		}
+		// Does the current map marker have a star count?
+		if (typeof self.currentMapMarker().stars() !== "undefined") {
+			self.currentMapMarker().showStars(true);		// Show the stars
+		}
+		// Does the current map marker have a review?
+		if (typeof self.currentMapMarker().review() !== "undefined") {
+			self.currentMapMarker().showReview(true);	// Show the review
+		}
 
 		// Store the google maps infoWindow to the self.infoWindow observable
 		self.infoWindow(
@@ -617,6 +629,10 @@ function viewModel() {
 
 		instagramPhotoArray = photos.slice(0,8);	// Slice the first 8 photos from the Instagram object and store them in instagramPhotoArray
 
+		// Do the photos exist?
+		if (instagramPhotoArray.length === 0) {
+			$(".instagram_error").css("display","inline"); // set '.instagram_error' element to visible
+		}
 
 		numberOfInstagramPhotos = instagramPhotoArray.length;
 		for (i = 0; i < numberOfInstagramPhotos; i++) {

@@ -62,26 +62,27 @@
         <div id="info-window-inner">
           <h1 data-bind="text: title"></h1>
           <p id="address" data-bind="text: address"></p>
-          <!-- ko if: stars -->
-          <div id="stars">
+          <!-- stars section -->
+          <div id="stars" data-bind="visible: showStars">
             <img src="" alt="stars-review" id="starsimg" data-bind="attr: {src: stars}">
           </div>
-          <div id="review-count">
+          <div id="review-count" data-bind="visible: showStars">
             <p><span data-bind="text: reviewCount"></span> reviews</p>
           </div>
-          <!-- /ko -->
-          <!-- ko if: review -->
-          <blockquote id="review"><span data-bind="text: review"></span></blockquote>
-          <div id="readmorelink">
-            <a target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
-          </div>
-          <!-- /ko -->
+          <!-- review section -->
+          <section data-bind="visible: showReview">
+            <blockquote id="review"><span data-bind="text: review"></span></blockquote>
+            <div id="readmorelink">
+              <a target="_blank" data-bind="attr: {href: yelpLink}">See all reviews</a>
+            </div>
+          </section>
+          <!-- photos -->
           <h4 id="photos-title">Recent Instagram photos near <span data-bind="text: title"></span></h4>
           <p class="instagram_error">Oops!  We couldn't find any Instagram photos in this location.</p>
           <ul data-bind="foreach: photos">
             <li><img data-bind="attr: {src: images.thumbnail.url, id: $index}" onclick="vm.openGallery(this)" class="gallery-thumb"></li>
           </ul>
-        </div>
+        </div> <!-- end infoWindow inner -->
       </div> <!-- end infoWindow template -->
     </section> <!-- end app container -->
 
