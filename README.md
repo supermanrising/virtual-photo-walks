@@ -94,3 +94,4 @@ Virtual Photo Walks uses the following Javascript libraries / extensions:
 * http://photoswipe.com/documentation/
 * http://javascript.info/tutorial/coordinates
 * http://stackoverflow.com/questions/8452062/how-to-ensure-calling-onkeyup-event-only-once
+* http://stackoverflow.com/questions/5937339/ipad-safari-make-keyboard-disappear

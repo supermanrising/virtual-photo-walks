@@ -447,11 +447,14 @@ function viewModel() {
 
 	});
 
+
+
 	/** @desc Gets coordinates based on location name entered by user
 	  */
 	self.checkLocation = function() {
 
-		$('main-search').blur();					// Hide the keyboard on mobile
+		document.activeElement.blur();
+    	$("input").blur();							// Hide the keyboard on mobile
 
 		self.mapLocations.removeAll();				// Clear previous location array
 		self.searchLocations.length = 0;			// Clear previous autocomplete search array
