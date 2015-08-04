@@ -75,6 +75,31 @@ Splash elements
 	box-shadow: none;
 }
 
+#splash input[type="submit"] {
+	margin: 10px 0 0 0;
+    font-size: 16px;
+    line-height: 26px;
+    padding: 10px 5px;
+    text-align: center;
+    -webkit-user-select: none;
+    -webkit-appearance: none;
+    border-radius: 0;
+    cursor: default;
+    border: none;
+    background-color: transparent;
+    display: none;
+}
+
+#splash input[type="submit"]:hover {
+	cursor: pointer;
+	text-decoration: underline;
+}
+
+.icon-more {
+	font-size: 20px;
+	display: none;
+}
+
 #splash-title {
 	font-size: 36px;
 	font-weight: 300;
@@ -159,15 +184,14 @@ input[type="text"]:focus {
 
 /***************************
 ****************************
-Location search
+location search
 ****************************
 ***************************/
 
 #location-search {
-	width: 200px;
 	position: absolute;
-	right: 20px;
-	bottom: 20px;
+	right: 10px;
+	bottom: 10px;
 	z-index: 90;
 }
 
@@ -205,6 +229,8 @@ Location search
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     -webkit-user-select: none;
+    -webkit-appearance: none;
+    border-radius: 0;
     cursor: default;
     color: #000000;
     border: #000000 solid 1px;
@@ -224,7 +250,7 @@ Location list
 ***************************/
 
 #list-view {
-	float:left;
+	float: left;
 	width: 260px;
 	height: 100%;
 	background-color: #fff;
@@ -398,6 +424,12 @@ Media queries
 @media only screen and (max-width: 400px) {
 	#info-window-inner {
 		max-height: 350px;
+	}
+
+	#location-search {
+		position: absolute;
+		right: 5px;
+		bottom: 5px;
 	}
 }
 @media only screen and (max-height: 300px) {

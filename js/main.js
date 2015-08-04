@@ -35,8 +35,16 @@ function initialize(lat,lng) {
 	    },
 	    panControlOptions: {
 	        position: google.maps.ControlPosition.LEFT_BOTTOM
-	    }
+	    },
+	    mapTypeControl: false
 	};
+
+	// Is the window less than 480px wide?
+	if ( window.innerWidth <= 480 ) {
+		mapOptions.panControl = false;	// hide google map panControl
+  		mapOptions.zoomControl = false;	// hide google map zoomControl
+	}
+
 	map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
 
 	requestMapMarkers(lat,lng);
@@ -139,7 +147,9 @@ function requestMapMarkers(lat,lng) {
   * @property {number} reviewCount - number of Yelp reviews
   * @property {string} yelpLink - url of location's Yelp page
   * @property {string} category - yelp category
-  * @property {boolean} _destory - boolean to hide / show list item
+  * @property {boolean} _destory - boolean to show/hide list item
+  * @property {boolean} showReview - boolean to show/hide Yelp review
+  * @property {boolean} showReview - boolean to show/hide Yelp stars
   */
 var googleMapLocation = function(data) {
 	this.title = ko.observable(data.name);
@@ -173,6 +183,8 @@ var googleMapLocation = function(data) {
   * @property {string} yelpLink - url of location's Yelp page, always empty
   * @property {string} category - yelp category, null
   * @property {boolean} _destory - boolean to hide / show list item
+  * @property {boolean} showReview - boolean to show/hide Yelp review
+  * @property {boolean} showReview - boolean to show/hide Yelp stars
   */
 var googlePlacesLocation = function(data) {
 	this.title = ko.observable(data.name);
@@ -426,9 +438,20 @@ function viewModel() {
 
 	self.locationSearch = ko.observable(''); // filter search term, updated by user input
 
+	/** @desc Jquery event listener
+	  * Displays `spash-submit` element the first time user types
+	  */
+	$('#main-search').one("keyup", function(){
+   		$('#splash-submit').fadeIn();
+   		$('.icon-more').fadeIn();
+
+	});
+
 	/** @desc Gets coordinates based on location name entered by user
 	  */
 	self.checkLocation = function() {
+
+		$('main-search').blur();					// Hide the keyboard on mobile
 
 		self.mapLocations.removeAll();				// Clear previous location array
 		self.searchLocations.length = 0;			// Clear previous autocomplete search array
