@@ -307,7 +307,7 @@ Info Window
 }
 
 #address {
-	margin:0;
+	margin: 0;
 	font-style: italic;
 	font-size: 12px;
 }
@@ -374,10 +374,6 @@ Info Window
 	margin-top: 5px;
 	font-weight: 500;
 	font-style: normal;
-}
-
-#info-window-inner li {
-
 }
 
 #info-window-inner li {
