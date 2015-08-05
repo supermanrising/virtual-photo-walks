@@ -8,7 +8,7 @@
 var map;
 var geocoder;
 var mapLocation;		// Location defined by user
-var bounds = new google.maps.LatLngBounds();		// Map bounds to be set based on map marker coordinates
+var bounds;		// Map bounds to be set based on map marker coordinates
 
 // Global Photoswipe variables
 var photoSwipeItems = [];		// array to hold objects for photoswipe gallery
@@ -21,6 +21,7 @@ var psOptions;		// Photoswipe options to be defined
   * @param {string} lng - The longitude (defined by geocoded location entered by user)
   */
 function initialize(lat,lng) {
+	bounds = new google.maps.LatLngBounds();
 	$("#splash").fadeOut();
 	$("#app").css({
   		display: "inline"
@@ -56,8 +57,7 @@ function initialize(lat,lng) {
   * @param {number} offsetX - Pixels to offset X coordinate
   * @param {number} offsetY - Pixels to offset Y coordinate
   */
-google.maps.Map.prototype.setCenterWithOffset = function(latlng, offsetX, offsetY) {
-    var map = this;
+function setCenterWithOffset(latlng, offsetX, offsetY) {
     var ov = new google.maps.OverlayView();
     ov.onAdd = function() {
         var proj = this.getProjection();
@@ -67,8 +67,8 @@ google.maps.Map.prototype.setCenterWithOffset = function(latlng, offsetX, offset
         map.panTo(proj.fromContainerPixelToLatLng(aPoint));
     };
     ov.draw = function() {};
-    ov.setMap(this);
-};
+    ov.setMap(map);
+}
 
 /** @desc Request photo walk locations from Yelp.com
   * Sends ajax request to php/request.php
@@ -689,7 +689,7 @@ function viewModel() {
 		}
 
 		// Call function to center map on infoWindow with height offset
-		map.setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - offsetHeight) * -1);
+		setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - offsetHeight) * -1);
 	};
 
 	/** @desc This function opens the photoswipe viewing gallery
@@ -745,3 +745,23 @@ function viewModel() {
 
 window.vm = new viewModel();	// Assign viewModel to a global variable
 ko.applyBindings(vm);			// Apply knockout bindings
+
+
+/** @desc Loads Google maps asynchronously
+  * Appends script to head element of DOM
+  */
+function loadScript() {
+	var script = document.createElement('script');
+	script.type = 'text/javascript';
+	script.src = 'https://maps.googleapis.com/maps/api/js?libraries=places&key=AIzaSyDoGCHyTEqulh1jz_wzwoa_FQ64EUl0T1I&callback=mapLoaded';
+	document.getElementsByTagName('head')[0].appendChild(script);
+}
+
+/** @desc Does nothing.
+  * Google maps needed a callback function to load asychronously.
+  */
+function mapLoaded() {
+	console.log('gOOgle has loaded.')
+}
+
+window.onload = loadScript; // When page is loaded, prepare google maps
