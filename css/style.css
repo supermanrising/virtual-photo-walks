@@ -11,7 +11,7 @@ html, body {
 }
 
 body {
-	font-family: 'Lato', sans-serif;
+	font-family: "Lato", sans-serif;
 }
 
 #map-canvas {
@@ -65,9 +65,7 @@ Splash elements
 	line-height: 42px;
 	font-weight: 300;
 	background: transparent;
-	border-bottom: 2px solid #000000;
-	/*transition: box-shadow 0.3s, border 0.3s;
-	box-shadow: none;*/
+	border-bottom: 2px solid #000;
 }
 
 #splash input[type="text"]:focus {
@@ -211,7 +209,7 @@ location search
 	padding: 0 8px;
 	border: none;
 	transition: box-shadow 0.3s, border 0.3s;
-	box-shadow: 0 0 5px 0 #C9C9C9;
+	box-shadow: 0 0 5px 0 #c9c9c9;
 }
 
 #location-search input[type="text"]:focus {
@@ -431,16 +429,19 @@ Media queries
 		bottom: 5px;
 	}
 }
+
 @media only screen and (max-height: 300px) {
 	#splash-title {
 		padding-top: 50px;
 	}
 }
+
 @media only screen and (max-height: 600px) and (min-height: 300px) {
 	#splash-title {
 		padding-top: 80px;
 	}
 }
+
 @media only screen and (min-height: 600px) {
 	#splash-title {
 		padding-top: 160px;
