@@ -51,25 +51,6 @@ function initialize(lat,lng) {
 	requestMapMarkers(lat,lng);
 }
 
-/** @desc This function centers the Google map with an offset X and Y value
-  * http://stackoverflow.com/questions/3473367/how-to-offset-the-center-of-a-google-maps-api-v3-in-pixels
-  * @param {google.maps.latlng} latlng - The center point to offset
-  * @param {number} offsetX - Pixels to offset X coordinate
-  * @param {number} offsetY - Pixels to offset Y coordinate
-  */
-function setCenterWithOffset(latlng, offsetX, offsetY) {
-    var ov = new google.maps.OverlayView();
-    ov.onAdd = function() {
-        var proj = this.getProjection();
-        var aPoint = proj.fromLatLngToContainerPixel(latlng);
-        aPoint.x = aPoint.x+offsetX;
-        aPoint.y = aPoint.y+offsetY;
-        map.panTo(proj.fromContainerPixelToLatLng(aPoint));
-    };
-    ov.draw = function() {};
-    ov.setMap(map);
-}
-
 /** @desc Request photo walk locations from Yelp.com
   * Sends ajax request to php/request.php
   * If Yelp returns 0 results, uses Google places as a backup
@@ -668,28 +649,9 @@ function viewModel() {
 
 		self.infoWindow().setContent($('#info-window-template').html()); 		// now that we have photos, update the infoWindow html content
 
-		/** This code centers the user's screen on the current infoWindow
-		  * It does it dynamically depending on the user's screen width
-		  */
-		var infoWindowHeight = $('#info-window-template').height();		// Get the height of the current infoWindow
-		var screenWidth = window.innerWidth;							// Get the width of the user's screen
-		var offsetHeight;
-
-		// Is the user's screen less than 400px wide?
-		if (screenWidth <= 400) {
-			offsetHeight = 140; 									// set offsetHeight to 140px
-		}
-		// Is the user's screen between 400px and 650px wide?
-		else if (screenWidth > 400 && screenWidth < 650) {
-			offsetHeight = 220;										// set offsetHeight to 220px
-		}
-		// Is the user's screen wider than 650px?
-		else {
-			offsetHeight = 280;										// set offsetHeight to 280px
-		}
-
-		// Call function to center map on infoWindow with height offset
-		setCenterWithOffset(self.currentMapMarker().coordinates, 0, (infoWindowHeight - offsetHeight) * -1);
+		// Call infoWindow.open again to reset map center, now that AJAX content has loaded
+		self.infoWindow().disableAutoPan = false;
+		self.infoWindow().open(map, self.currentMapMarker().marker());
 	};
 
 	/** @desc This function opens the photoswipe viewing gallery
