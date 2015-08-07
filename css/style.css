@@ -16,7 +16,7 @@ body {
 
 #map-canvas {
 	width: 100%;
-	height: calc(100% - 36px);
+	height: calc(100% - 37px);
 	margin: 0;
 	padding: 0;
 }
@@ -252,7 +252,7 @@ Location list
 
 #list-view {
 	float: left;
-	height: calc(100% - 36px);
+	height: calc(100% - 37px);
 	width: 260px;
 	overflow-y: auto;
 	background-color: #fff;
