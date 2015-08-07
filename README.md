@@ -9,6 +9,10 @@ Ever wanted to go on a photo walk but just couldn't find the energy to go outsid
 
 ### Quick Setup
 
+You can clone this project with the following URL:
+
+` https://github.com/supermanrising/virtual-photo-walks.git `
+
 To run this project locally, you will need to have apache installed on your computer.  I recommend using [XAMPP](https://www.apachefriends.org/index.html).
 
 Once you have apache running, open index.html on your localhost.
