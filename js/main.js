@@ -169,20 +169,8 @@ var googleMapLocation = function(data) {
   */
 var googlePlacesLocation = function(data) {
 	this.title = ko.observable(data.name);
-
-	/** Access location coordinates by iterating over Key/Value pairs in the 'location' object returned by Google and push them to an array
-	  * I do it this way because Google changed the name of the coordinate keys while in developement stages
-	  * This way, if Google changes key names again, the app won't break
-	  */
-	this.locCoors = [];
-	for( var key in data.geometry.location ) {
-		if ( data.geometry.location.hasOwnProperty(key) ) {
-		    this.locCoors.push(data.geometry.location[key]);
-		}
-	}
-
-	this.latitude = this.locCoors[0];		// first value in locCoors array
-	this.longitude = this.locCoors[1];		// second value in locCoors array
+	this.latitude = data.geometry.location.lat();
+	this.longitude = data.geometry.location.lng();
 	this.address = ko.observable(data.vicinity);
 	this.photos = ko.observableArray();
 	this.marker = ko.observable();
@@ -331,14 +319,7 @@ function createMapMarkers() {
 				// Did the google places search work?
 				if (status == google.maps.places.PlacesServiceStatus.OK) {
 
-					// save the coordinates in the currentMapMarker as a Google.maps.LatLng object
-					var locCoors = [];
-					for( var key in results[0].geometry.location ) {
-						if ( results[0].geometry.location.hasOwnProperty(key) ) {
-						    locCoors.push(results[0].geometry.location[key]);
-						}
-					}
-			    	currentMapMarker.coordinates = new google.maps.LatLng(locCoors[0],locCoors[1]);
+			    	currentMapMarker.coordinates = new google.maps.LatLng(results[0].geometry.location.lat(),results[0].geometry.location.lng());
 
 			    	marker = new google.maps.Marker({
 					    map: map,
@@ -445,19 +426,7 @@ function viewModel() {
 		geocoder = new google.maps.Geocoder();
 		geocoder.geocode( { 'address': self.locationSearch()}, function(results, status) {
 	    	if (status == google.maps.GeocoderStatus.OK) {
-
-	    		/** Access location coordinates by iterating over Key/Value pairs in the 'location' object returned by Google and push them to an array
-				  * I do it this way because Google changed the name of the coordinate keys while in developement stages
-				  * This way, if Google changes key names again, the app won't break
-				  */
-	    		var locCoors = [];
-				for( var key in results[0].geometry.location ) {
-					if ( results[0].geometry.location.hasOwnProperty(key) ) {
-					    locCoors.push(results[0].geometry.location[key]);
-					}
-				}
-
-	       		initialize(locCoors[0], locCoors[1]);
+	    		initialize(results[0].geometry.location.lat(), results[0].geometry.location.lng());
 	      	} // end if statement
 	    }); // end geocode
 	}; // end checkLocation
